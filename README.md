@@ -1,7 +1,7 @@
 # sajisehat
 
 Penggunaan Nama Branch
-Untuk nama branch harus menggunakan standar seperti berikut :
+ Untuk nama branch harus menggunakan standar seperti berikut :
 
 (nama)-(tipe): (deskripsi)
 contoh : ito-feat/autentikasi
