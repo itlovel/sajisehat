@@ -1,10 +1,18 @@
 # sajisehat
 
 Penggunaan Nama Branch
- Untuk nama branch harus menggunakan standar seperti berikut :
+
+Untuk nama branch harus menggunakan standar seperti berikut :
 
 (nama)-(tipe): (deskripsi)
+
 contoh : ito-feat/autentikasi
+
+Untuk Commit atau push
+
+Harus menggunakan conventional commits!
+
+dengan format tipe: deskripsi
 
 Berikut Tipenya
 - API or UI relevant changes
