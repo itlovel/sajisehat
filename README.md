@@ -7,7 +7,7 @@ Untuk nama branch harus menggunakan standar seperti berikut :
 contoh : ito-feat/autentikasi
 
 Berikut Tipenya
-API or UI relevant changes
+- API or UI relevant changes
 feat Commits, that add or remove a new feature to the API or UI
 fix Commits, that fix an API or UI bug of a preceded feat commit
 refactor Commits, that rewrite/restructure your code, however do not change any API or UI behaviour
