@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "550724934641",
+    "project_id": "sajisehat",
+    "storage_bucket": "sajisehat.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550724934641:android:73a1f5dd46c86f561b0250",
+        "android_client_info": {
+          "package_name": "com.example.sajisehat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBir6FOrK2uV4FNX0VU6WoehNeEQ93Q3ws"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
