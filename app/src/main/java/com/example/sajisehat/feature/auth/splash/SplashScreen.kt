@@ -2,64 +2,65 @@ package com.example.sajisehat.feature.auth.splash
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sajisehat.R
 
 @Composable
 fun SplashScreen(
-    onNav: (SplashNav) -> Unit = {},   // default untuk Preview
+    onNav: (SplashNav) -> Unit = {},
     vm: SplashViewModel = viewModel()
-){
+) {
     LaunchedEffect(Unit) { vm.decide(onNav) }
 
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Spacer(Modifier.height(16.dp))
-            Image(
-                painter = painterResource(id = R.drawable.ic_app_logo_large), // pakai asetmu
-                contentDescription = null,
-                modifier = Modifier
-                    .size(180.dp),
-                contentScale = ContentScale.Fit
-            )
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    "SAJISEHAT",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold)
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    "Baca Labelnya, Jaga Gula-nya, Sehat Raganya!",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
+    Surface(Modifier.fillMaxSize()) {
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            // ukuran logo & seberapa jauh digeser turun (dari titik tengah)
+            val logoSize = maxHeight * 0.19f        // ~19% tinggi layar
+            val centerShift = maxHeight * 0.01f     // geser 1% ke bawah
+
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(y = centerShift)
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp),
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    color = MaterialTheme.colorScheme.primary
+                Image(
+                    painter = painterResource(R.drawable.ic_app_logo_large),
+                    contentDescription = null,
+                    modifier = Modifier.size(logoSize),
+                    contentScale = ContentScale.Fit
+                )
+
+                Spacer(Modifier.height(12.dp))
+
+                Text(
+                    text = "SAJISEHAT",
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.ExtraBold
+                    ),
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(Modifier.height(6.dp))
+
+                Text(
+                    text = "Baca Labelnya, Jaga Gula-nya,\nSehat Raganya!",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
                 )
             }
         }
