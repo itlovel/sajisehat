@@ -14,6 +14,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.sajisehat.feature.auth.login.LoginScreen
+import com.example.sajisehat.feature.auth.onboarding.OnboardingScreen
+import com.example.sajisehat.feature.auth.register.RegisterEmailScreen
+import com.example.sajisehat.feature.auth.register.RegisterNameScreen
+import com.example.sajisehat.feature.auth.register.RegisterPasswordScreen
+import com.example.sajisehat.feature.auth.register.RegisterSuccessScreen
+import com.example.sajisehat.feature.auth.splash.SplashNav
+import com.example.sajisehat.feature.auth.splash.SplashScreen
 import com.example.sajisehat.feature.catalog.ui.CatalogScreen
 import com.example.sajisehat.feature.detail.ui.DetailScreen
 import com.example.sajisehat.feature.home.ui.HomeScreen
@@ -31,9 +39,8 @@ import com.example.sajisehat.ui.components.bottombar.rememberBottomBarSpec
 @Composable
 fun SajisehatApp() {
     val nav = rememberNavController()
-    val spec = rememberBottomBarSpec() // responsive sizes (bar, icons, FAB, spacer, etc.)
+    val spec = rememberBottomBarSpec()
 
-    // Bottom bar items (left side)
     val leftItems = listOf(
         BottomNavItem(
             route = Dest.Home.route, label = "Beranda",
@@ -48,8 +55,6 @@ fun SajisehatApp() {
             useTint = false
         )
     )
-
-    // Bottom bar items (right side)
     val rightItems = listOf(
         BottomNavItem(
             route = Dest.Catalog.route, label = "Katalog",
@@ -65,7 +70,6 @@ fun SajisehatApp() {
         )
     )
 
-    // Routes where the bottom bar should be shown
     val barRoutes = setOf(
         Dest.Home.route, Dest.Trek.route, Dest.Scan.route, Dest.Catalog.route, Dest.Profile.route
     )
@@ -82,7 +86,7 @@ fun SajisehatApp() {
                 leftItems = leftItems,
                 rightItems = rightItems,
                 barHeight = spec.barHeight,
-                corner = 8.dp,          // hanya sudut atas yang melengkung (bawah 0.dp di file bar)
+                corner = 8.dp,
                 haloSize = spec.haloSize,
                 iconSize = spec.iconSize,
                 spacerWidth = spec.spacerWidth,
@@ -97,7 +101,7 @@ fun SajisehatApp() {
                 selected = scanSelected,
                 icon = painterResource(R.drawable.ic_scan),
                 onClick = { nav.navigateSingleTopTo(Dest.Scan.route) },
-                modifier = Modifier.offset(y = spec.fabOffsetY + 15.dp), // ← FAB lebih turun
+                modifier = Modifier.offset(y = spec.fabOffsetY + 15.dp),
                 size = spec.fabSize,
                 iconSize = spec.fabIconSize
             )
@@ -106,9 +110,59 @@ fun SajisehatApp() {
     ) { inner ->
         NavHost(
             navController = nav,
-            startDestination = Dest.Home.route,
-            modifier = Modifier.padding(inner)
+            startDestination = Dest.Splash.route,
+            route = "root",
+            modifier = Modifier.padding(inner)   // ✅ pakai content padding
         ) {
+            // ---------- AUTH ----------
+            composable(Dest.Splash.route) {
+                SplashScreen(onNav = { navDir ->   // ✅ pass onNav (named)
+                    when (navDir) {
+                        is SplashNav.ToOnboarding -> nav.navigate(Dest.Onboarding.route) {
+                            popUpTo(Dest.Splash.route) { inclusive = true }
+                        }
+                        is SplashNav.ToHome -> nav.navigate(Dest.Home.route) {
+                            popUpTo(Dest.Splash.route) { inclusive = true }
+                        }
+                        is SplashNav.ToLogin -> nav.navigate(Dest.Login.route) {
+                            popUpTo(Dest.Splash.route) { inclusive = true }
+                        }
+                    }
+                })
+            }
+            composable(Dest.Onboarding.route) {
+                OnboardingScreen(onFinish = {
+                    nav.navigate(Dest.Login.route) {
+                        popUpTo(Dest.Onboarding.route) { inclusive = true }
+                    }
+                })
+            }
+            composable(Dest.Login.route) {
+                LoginScreen(
+                    onRegister = { nav.navigate(Dest.RegisterName.route) },
+                    onLoggedIn = { nav.navigate(Dest.Home.route) { popUpTo(0) } }
+                )
+            }
+            composable(Dest.RegisterName.route) {
+                RegisterNameScreen(onNext = { nav.navigate(Dest.RegisterEmail.route) })
+            }
+            composable(Dest.RegisterEmail.route) {
+                RegisterEmailScreen(onNext = { nav.navigate(Dest.RegisterPassword.route) })
+            }
+            composable(Dest.RegisterPassword.route) {
+                RegisterPasswordScreen(onSuccess = {
+                    nav.navigate(Dest.RegisterSuccess.route) {
+                        popUpTo(Dest.Login.route) { inclusive = false }
+                    }
+                })
+            }
+            composable(Dest.RegisterSuccess.route) {
+                RegisterSuccessScreen(onGoHome = {
+                    nav.navigate(Dest.Home.route) { popUpTo(0) }
+                })
+            }
+
+            // ---------- MAIN ----------
             composable(Dest.Home.route)    { HomeScreen(onOpen = { id -> nav.navigate(Dest.Detail.route(id)) }) }
             composable(Dest.Trek.route)    { TrekScreen() }
             composable(Dest.Scan.route)    { ScanScreen() }

@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.datastore.preferences.core.android)
 //    implementation(libs.androidx.navigation.common.android)
 //    implementation(libs.androidx.navigation.runtime.android)
 //    implementation(libs.androidx.navigation.compose.jvmstubs.v296)
@@ -71,6 +72,9 @@ dependencies {
 //    implementation(libs.androidx.activity.compose.v193)
     implementation(libs.material)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.material.icons.extended)
+
 
 
 
