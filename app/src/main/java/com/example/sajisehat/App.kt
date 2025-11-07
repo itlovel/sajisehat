@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.example.sajisehat.feature.auth.login.LoginEmailScreen
 import com.example.sajisehat.feature.auth.login.LoginScreen
 import com.example.sajisehat.feature.auth.onboarding.OnboardingScreen
 import com.example.sajisehat.feature.auth.register.RegisterEmailScreen
@@ -135,6 +136,12 @@ fun SajisehatApp() {
             composable(Dest.Login.route) {
                 LoginScreen(
                     onRegister = { nav.navigate(Dest.Register.route) },
+                    onLoggedIn = { nav.navigate(Dest.Home.route) { popUpTo(0) } },
+                    onEmailSignIn = { nav.navigate(Dest.LoginEmail.route) }
+                )
+            }
+            composable(Dest.LoginEmail.route) {
+                LoginEmailScreen(
                     onLoggedIn = { nav.navigate(Dest.Home.route) { popUpTo(0) } }
                 )
             }

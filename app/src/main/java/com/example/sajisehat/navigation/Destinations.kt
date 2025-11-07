@@ -1,15 +1,14 @@
 package com.example.sajisehat.navigation
 
-// navigation/Dest.kt
 sealed class Dest(val route: String) {
     // Auth
     data object Splash : Dest("splash")
     data object Onboarding : Dest("onboarding")
     data object Login : Dest("login")
+    data object LoginEmail : Dest("login/email")  
 
     // Parent graph untuk register
     data object Register : Dest("register")
-
     data object RegisterName : Dest("register/name")
     data object RegisterEmail : Dest("register/email")
     data object RegisterPassword : Dest("register/password")
@@ -26,4 +25,5 @@ sealed class Dest(val route: String) {
         fun route(id: String) = "detail/$id"
     }
 }
+
 

@@ -1,6 +1,6 @@
 package com.example.sajisehat.feature.auth.login
 
-import android.content.Context
+import android.app.Activity
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.lifecycle.ViewModel
@@ -22,41 +22,70 @@ data class LoginUiState(
 )
 
 class LoginViewModel : ViewModel() {
+
     private val _state = MutableStateFlow(LoginUiState())
     val state: StateFlow<LoginUiState> = _state
 
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
 
-    fun signInWithGoogle(context: Context) {
-        viewModelScope.launch {
-            try {
-                _state.update { it.copy(isLoading = true, error = null) }
+    /**
+     * Try Credential Manager first. If it fails, call [onFallback] so UI can launch
+     * classic Google Sign-In (Play Services).
+     */
+    fun signInWithGoogle(
+        activity: Activity,
+        onFallback: (serverClientId: String, cause: Throwable?) -> Unit
+    ) = viewModelScope.launch {
+        try {
+            _state.update { it.copy(isLoading = true, error = null) }
 
-                val serverClientId = context.getString(R.string.default_web_client_id)
+            val serverClientId = activity.getString(R.string.default_web_client_id)
+            val googleIdOption = GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(false)
+                .setServerClientId(serverClientId)
+                .setAutoSelectEnabled(false)
+                .build()
 
-                val googleIdOption = GetGoogleIdOption.Builder()
-                    .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(serverClientId)
-                    .setAutoSelectEnabled(false)
-                    .build()
+            val request = GetCredentialRequest.Builder()
+                .addCredentialOption(googleIdOption)
+                .build()
 
-                val request = GetCredentialRequest.Builder()
-                    .addCredentialOption(googleIdOption)
-                    .build()
+            val cm = CredentialManager.create(activity)
+            val result = cm.getCredential(activity, request)
+            val googleIdCred = GoogleIdTokenCredential.createFrom(result.credential.data)
 
-                val cm = CredentialManager.create(context)
-                val result = cm.getCredential(context, request)
-                val googleIdCred = GoogleIdTokenCredential.createFrom(result.credential.data)
-                val firebaseCred = GoogleAuthProvider.getCredential(googleIdCred.idToken, null)
-
-                auth.signInWithCredential(firebaseCred)
-                    .addOnSuccessListener { _state.update { s -> s.copy(isLoading = false, isLoggedIn = true) } }
-                    .addOnFailureListener { e -> _state.update { s -> s.copy(isLoading = false, error = e.message) } }
-            } catch (t: Throwable) {
-                _state.update { it.copy(isLoading = false, error = t.message) }
-            }
+            // Continue with Firebase
+            signInWithFirebaseIdToken(googleIdCred.idToken)
+        } catch (t: Throwable) {
+            // hand to classic fallback
+            val clientId = runCatching { activity.getString(R.string.default_web_client_id) }.getOrNull()
+            _state.update { it.copy(isLoading = false) }
+            if (clientId != null) onFallback(clientId, t)
+            else setError(t.message ?: "Tidak bisa memulai Google Sign-In")
         }
     }
 
-    fun clearError() = _state.update { it.copy(error = null) }
+    /** Use this when you already have an ID token (from classic Google Sign-In). */
+    fun signInWithFirebaseIdToken(idToken: String?) {
+        if (idToken.isNullOrBlank()) {
+            setError("No credentials available")
+            return
+        }
+        _state.update { it.copy(isLoading = true, error = null) }
+        auth.signInWithCredential(GoogleAuthProvider.getCredential(idToken, null))
+            .addOnSuccessListener {
+                _state.update { s -> s.copy(isLoading = false, isLoggedIn = true) }
+            }
+            .addOnFailureListener { e ->
+                _state.update { s -> s.copy(isLoading = false, error = e.message) }
+            }
+    }
+
+    // ---------- helpers for error UI ----------
+    fun setError(message: String?) {
+        _state.update { it.copy(error = message) }
+    }
+    fun clearError() {
+        _state.update { it.copy(error = null) }
+    }
 }
