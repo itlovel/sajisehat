@@ -1,4 +1,4 @@
-package com.example.sajisehat.data.prefs
+package com.example.sajisehat.data.perfs
 
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
