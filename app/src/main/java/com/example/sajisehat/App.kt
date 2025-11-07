@@ -165,11 +165,6 @@ fun SajisehatApp() {
     }
 }
 
-/**
- * Semua pemanggilan composable tetap berada DI DALAM lambda `composable { ... }`.
- * ViewModel dibagi bersama lewat parent graph "register" menggunakan ViewModelProvider
- * (tidak bergantung pada overload `viewModel()` yang berbeda-beda antar versi).
- */
 private fun NavGraphBuilder.registerGraph(nav: NavHostController) {
     composable(Dest.RegisterName.route) { backStackEntry ->
         val parentEntry = remember(backStackEntry) {
