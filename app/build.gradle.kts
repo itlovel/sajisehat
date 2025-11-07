@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.datastore.preferences.core.android)
+    implementation(libs.androidx.compose.foundation)
 //    implementation(libs.androidx.navigation.common.android)
 //    implementation(libs.androidx.navigation.runtime.android)
 //    implementation(libs.androidx.navigation.compose.jvmstubs.v296)

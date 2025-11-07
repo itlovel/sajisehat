@@ -8,5 +8,5 @@ val AppShapes = Shapes(
     extraSmall = RoundedCornerShape(6.dp),
     small      = RoundedCornerShape(10.dp),
     medium     = RoundedCornerShape(14.dp), // buttons/cards in your mock
-    large      = RoundedCornerShape(20.dp)
+    large      = RoundedCornerShape(12.dp)
 )

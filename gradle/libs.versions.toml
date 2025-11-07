@@ -26,6 +26,7 @@ navigationCommonAndroid = "2.9.5"
 navigationRuntimeAndroid = "2.9.5"
 navigationComposeJvmstubs = "2.9.5"
 datastorePreferencesCoreAndroid = "1.1.7"
+foundation = "1.9.4"
 
 [libraries]
 androidx-activity-compose-v193 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
@@ -63,6 +64,7 @@ androidx-navigation-common-android = { group = "androidx.navigation", name = "na
 androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroid" }
 androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" }
 androidx-datastore-preferences-core-android = { group = "androidx.datastore", name = "datastore-preferences-core-android", version.ref = "datastorePreferencesCoreAndroid" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
