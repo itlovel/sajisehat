@@ -1,12 +1,17 @@
 package com.example.sajisehat.feature.auth.register
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.withStyle
+import com.example.sajisehat.ui.components.CompactOutlinedTextField
 
 @Composable
 fun RegisterEmailScreen(
@@ -19,28 +24,64 @@ fun RegisterEmailScreen(
         Column(
             Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
                 .padding(horizontal = 24.dp, vertical = 12.dp)
         ) {
             RegisterProgress(title = "buat akun", percent = st.stepPercent)
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(50.dp))
             Text(
-                "Masukkan Email Anda",
+                text = "Masukkan Email Anda",
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold)
             )
 
             Spacer(Modifier.height(16.dp))
-            OutlinedTextField(
-                value = st.email, onValueChange = vm::updateEmail,
-                label = { Text("Email*") }, singleLine = true,
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
+
+            RequiredLabel("Email")
+
+            CompactOutlinedTextField(
+                value = st.email,
+                onValueChange = vm::updateEmail,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Done
+                ),
+                shape = MaterialTheme.shapes.large
             )
 
             Spacer(Modifier.height(24.dp))
+
             Button(
                 onClick = { vm.moveToPassword(); onNext() },
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
-            ) { Text("Lanjut") }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(45.dp),
+                shape = MaterialTheme.shapes.large,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                Text("Lanjut", style = MaterialTheme.typography.titleMedium)
+            }
         }
     }
+}
+
+@Composable
+private fun RequiredLabel(text: String) {
+    val styled = androidx.compose.ui.text.buildAnnotatedString {
+        append(text)
+        append(" ")
+        withStyle(SpanStyle(color = MaterialTheme.colorScheme.secondary)) { append("*") }
+    }
+    Text(
+        text = styled,
+        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium),
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 4.dp, bottom = 6.dp)
+    )
 }

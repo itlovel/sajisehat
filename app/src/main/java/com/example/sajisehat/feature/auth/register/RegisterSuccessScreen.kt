@@ -2,15 +2,12 @@ package com.example.sajisehat.feature.auth.register
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,53 +16,69 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun RegisterSuccessScreen(onGoHome: () -> Unit) {
-    // ✅ Auto-redirect ke Home setelah 1.2 detik
     LaunchedEffect(Unit) {
         delay(1200)
         onGoHome()
     }
 
+    val h = LocalConfiguration.current.screenHeightDp
+    val logoSize = (h * 0.20f).dp
+
     Surface(Modifier.fillMaxSize()) {
         Column(
-            Modifier
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(Modifier.weight(0.50f))
+
             Image(
                 painter = painterResource(R.drawable.ic_app_logo_large),
                 contentDescription = null,
-                modifier = Modifier.size(160.dp)
+                modifier = Modifier.size(logoSize)
             )
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    "SAJISEHAT",
-                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold)
+
+            Spacer(Modifier.height(12.dp))
+
+            Text(
+                text = "SAJISEHAT",
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold)
+            )
+
+            Spacer(Modifier.height(18.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_badge_check),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(50.dp)
                 )
-                Spacer(Modifier.height(16.dp))
-                Text("buat akun", style = MaterialTheme.typography.bodyMedium)
-                Text(
-                    "sukses",
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold)
-                )
-            }
-            Column(Modifier.fillMaxWidth()) {
-                LinearProgressIndicator(
-                    progress = 1f,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp),
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Spacer(Modifier.height(6.dp))
-                Text("100%", style = MaterialTheme.typography.labelSmall)
+                Spacer(Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = "buat akun",
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                    Text(
+                        text = "sukses",
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold)
+                    )
+                }
             }
 
-            // Fallback (opsional): jika user ingin langsung ketuk
-            TextButton(onClick = onGoHome) {
-                Text("Ke Beranda sekarang")
-            }
+            Spacer(Modifier.height(22.dp))
+
+            RegisterProgress(
+                title = "",
+                percent = 100,
+                showLogo = false
+            )
+
+            Spacer(Modifier.weight(0.88f))
         }
     }
 }

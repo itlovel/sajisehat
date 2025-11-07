@@ -50,13 +50,13 @@ fun CompactOutlinedTextField(
         border = BorderStroke(1.dp, outlineColor),
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp) // << tinggi compact sesuai Figma
+            .height(45.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 10.dp) // kontrol padding isi
+                .padding(horizontal = 16.dp, vertical = 10.dp)
         ) {
             if (leading != null) {
                 leading()

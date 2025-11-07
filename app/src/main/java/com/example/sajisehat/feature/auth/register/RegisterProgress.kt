@@ -8,40 +8,78 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.example.sajisehat.R
+import kotlin.math.min
 
 @Composable
-fun RegisterProgress(title: String, percent: Int) {
+fun RegisterProgress(
+    title: String,
+    percent: Int,
+    showLogo: Boolean = true,
+) {
+    val screenW = LocalConfiguration.current.screenWidthDp.dp
+    val groupWidth = min(screenW * 0.65f, 320.dp)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .statusBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .statusBarsPadding()
     ) {
-        // Logo di atas bar
-        Image(
-            painter = painterResource(R.drawable.ic_app_logo_large),
-            contentDescription = null,
-            modifier = Modifier.size(72.dp)
-        )
-        Spacer(Modifier.height(12.dp))
+        // Logo
+        if (showLogo) {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_app_logo_large),
+                    contentDescription = null,
+                    modifier = Modifier.size(105.dp)
+                )
+            }
+            Spacer(Modifier.height(12.dp))
+        }
 
-        Text(title, style = MaterialTheme.typography.labelLarge)
-        Spacer(Modifier.height(8.dp))
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(modifier = Modifier.width(groupWidth)) {
+                if (title.isNotBlank()) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.align(Alignment.Start)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                }
 
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-            LinearProgressIndicator(
-                progress = percent / 100f,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(8.dp),
-                color = MaterialTheme.colorScheme.primary,
-                trackColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-            Spacer(Modifier.width(8.dp))
-            Text("$percent%", style = MaterialTheme.typography.labelSmall)
+                LinearProgressIndicator(
+                    progress = percent / 100f,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+
+                Spacer(Modifier.height(6.dp))
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    Text(
+                        text = "$percent%",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
         }
     }
 }
