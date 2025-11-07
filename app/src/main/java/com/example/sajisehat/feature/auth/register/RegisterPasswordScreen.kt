@@ -13,12 +13,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun RegisterPasswordScreen(
     onSuccess: () -> Unit,
-    vm: RegisterViewModel = viewModel()
+    vm: RegisterViewModel
 ) {
     val st by vm.state.collectAsState()
     var show by remember { mutableStateOf(false) }
@@ -27,11 +26,8 @@ fun RegisterPasswordScreen(
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(24.dp)
-                .statusBarsPadding()
+                .padding(horizontal = 24.dp, vertical = 12.dp)
         ) {
-
-            Spacer(Modifier.height(12.dp))
             RegisterProgress(title = "buat akun", percent = st.stepPercent)
 
             Spacer(Modifier.height(24.dp))
@@ -42,9 +38,13 @@ fun RegisterPasswordScreen(
 
             Spacer(Modifier.height(16.dp))
             OutlinedTextField(
-                value = st.email, onValueChange = {}, enabled = false,
-                label = { Text("Email*") }, singleLine = true,
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
+                value = st.email,
+                onValueChange = {},      // terkunci
+                enabled = false,
+                label = { Text("Email*") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
             Spacer(Modifier.height(12.dp))
             OutlinedTextField(
@@ -54,13 +54,14 @@ fun RegisterPasswordScreen(
                 trailingIcon = {
                     IconButton(onClick = { show = !show }) {
                         Icon(
-                            imageVector = if (show) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                            if (show) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                             contentDescription = if (show) "Hide" else "Show"
                         )
                     }
                 },
                 supportingText = { Text("Password must be 6+ characters") },
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
 
             Spacer(Modifier.height(12.dp))
@@ -79,16 +80,11 @@ fun RegisterPasswordScreen(
             Button(
                 onClick = { vm.submit(onSuccess) },
                 enabled = !st.loading,
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                if (st.loading) {
-                    CircularProgressIndicator(
-                        Modifier.size(18.dp), strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text("Lanjut")
-                }
+                if (st.loading) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp, color = MaterialTheme.colorScheme.onPrimary)
+                else Text("Lanjut")
             }
         }
     }

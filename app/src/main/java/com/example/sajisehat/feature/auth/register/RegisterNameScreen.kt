@@ -7,12 +7,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun RegisterNameScreen(
     onNext: () -> Unit,
-    vm: RegisterViewModel = viewModel()
+    vm: RegisterViewModel
 ) {
     val st by vm.state.collectAsState()
 
@@ -20,10 +19,8 @@ fun RegisterNameScreen(
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(24.dp)
-                .statusBarsPadding()
+                .padding(horizontal = 24.dp, vertical = 12.dp)
         ) {
-            Spacer(Modifier.height(12.dp))
             RegisterProgress(title = "buat akun", percent = st.stepPercent)
 
             Spacer(Modifier.height(24.dp))

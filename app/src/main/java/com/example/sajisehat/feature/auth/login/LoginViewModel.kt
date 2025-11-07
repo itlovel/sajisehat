@@ -32,10 +32,7 @@ class LoginViewModel : ViewModel() {
             try {
                 _state.update { it.copy(isLoading = true, error = null) }
 
-                val serverClientId = context.getString(
-                    // resource ini dibuat otomatis oleh google-services.json
-                    R.string.default_web_client_id
-                )
+                val serverClientId = context.getString(R.string.default_web_client_id)
 
                 val googleIdOption = GetGoogleIdOption.Builder()
                     .setFilterByAuthorizedAccounts(false)
@@ -47,20 +44,14 @@ class LoginViewModel : ViewModel() {
                     .addCredentialOption(googleIdOption)
                     .build()
 
-                val credentialManager = CredentialManager.create(context)
-                val result = credentialManager.getCredential(context, request)
-                val googleIdCred =
-                    GoogleIdTokenCredential.createFrom(result.credential.data)
-                val firebaseCred =
-                    GoogleAuthProvider.getCredential(googleIdCred.idToken, null)
+                val cm = CredentialManager.create(context)
+                val result = cm.getCredential(context, request)
+                val googleIdCred = GoogleIdTokenCredential.createFrom(result.credential.data)
+                val firebaseCred = GoogleAuthProvider.getCredential(googleIdCred.idToken, null)
 
                 auth.signInWithCredential(firebaseCred)
-                    .addOnSuccessListener {
-                        _state.update { st -> st.copy(isLoading = false, isLoggedIn = true) }
-                    }
-                    .addOnFailureListener { e ->
-                        _state.update { st -> st.copy(isLoading = false, error = e.message) }
-                    }
+                    .addOnSuccessListener { _state.update { s -> s.copy(isLoading = false, isLoggedIn = true) } }
+                    .addOnFailureListener { e -> _state.update { s -> s.copy(isLoading = false, error = e.message) } }
             } catch (t: Throwable) {
                 _state.update { it.copy(isLoading = false, error = t.message) }
             }

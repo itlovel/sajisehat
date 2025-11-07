@@ -6,13 +6,18 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.example.sajisehat.feature.auth.login.LoginScreen
 import com.example.sajisehat.feature.auth.onboarding.OnboardingScreen
@@ -20,6 +25,7 @@ import com.example.sajisehat.feature.auth.register.RegisterEmailScreen
 import com.example.sajisehat.feature.auth.register.RegisterNameScreen
 import com.example.sajisehat.feature.auth.register.RegisterPasswordScreen
 import com.example.sajisehat.feature.auth.register.RegisterSuccessScreen
+import com.example.sajisehat.feature.auth.register.RegisterViewModel
 import com.example.sajisehat.feature.auth.splash.SplashNav
 import com.example.sajisehat.feature.auth.splash.SplashScreen
 import com.example.sajisehat.feature.catalog.ui.CatalogScreen
@@ -44,36 +50,25 @@ fun SajisehatApp() {
     val leftItems = listOf(
         BottomNavItem(
             route = Dest.Home.route, label = "Beranda",
-            iconRes = R.drawable.ic_home_outline,
-            iconSelectedRes = R.drawable.ic_home_filled,
-            useTint = false
+            iconRes = R.drawable.ic_home_outline, iconSelectedRes = R.drawable.ic_home_filled, useTint = false
         ),
         BottomNavItem(
             route = Dest.Trek.route, label = "Trek Gula",
-            iconRes = R.drawable.ic_trek_outline,
-            iconSelectedRes = R.drawable.ic_trek_filled,
-            useTint = false
+            iconRes = R.drawable.ic_trek_outline, iconSelectedRes = R.drawable.ic_trek_filled, useTint = false
         )
     )
     val rightItems = listOf(
         BottomNavItem(
             route = Dest.Catalog.route, label = "Katalog",
-            iconRes = R.drawable.ic_catalog_outline,
-            iconSelectedRes = R.drawable.ic_catalog_filled,
-            useTint = false
+            iconRes = R.drawable.ic_catalog_outline, iconSelectedRes = R.drawable.ic_catalog_filled, useTint = false
         ),
         BottomNavItem(
             route = Dest.Profile.route, label = "Profil",
-            iconRes = R.drawable.ic_profile_outline,
-            iconSelectedRes = R.drawable.ic_profile_filled,
-            useTint = false
+            iconRes = R.drawable.ic_profile_outline, iconSelectedRes = R.drawable.ic_profile_filled, useTint = false
         )
     )
 
-    val barRoutes = setOf(
-        Dest.Home.route, Dest.Trek.route, Dest.Scan.route, Dest.Catalog.route, Dest.Profile.route
-    )
-
+    val barRoutes = setOf(Dest.Home.route, Dest.Trek.route, Dest.Scan.route, Dest.Catalog.route, Dest.Profile.route)
     val backStackEntry by nav.currentBackStackEntryAsState()
     val currentDest = backStackEntry?.destination
     val showBar = currentDest?.hierarchy?.any { it.route in barRoutes } == true
@@ -112,11 +107,11 @@ fun SajisehatApp() {
             navController = nav,
             startDestination = Dest.Splash.route,
             route = "root",
-            modifier = Modifier.padding(inner)   // ✅ pakai content padding
+            modifier = Modifier.padding(inner)
         ) {
             // ---------- AUTH ----------
             composable(Dest.Splash.route) {
-                SplashScreen(onNav = { navDir ->   // ✅ pass onNav (named)
+                SplashScreen(onNav = { navDir ->
                     when (navDir) {
                         is SplashNav.ToOnboarding -> nav.navigate(Dest.Onboarding.route) {
                             popUpTo(Dest.Splash.route) { inclusive = true }
@@ -139,27 +134,14 @@ fun SajisehatApp() {
             }
             composable(Dest.Login.route) {
                 LoginScreen(
-                    onRegister = { nav.navigate(Dest.RegisterName.route) },
+                    onRegister = { nav.navigate(Dest.Register.route) },
                     onLoggedIn = { nav.navigate(Dest.Home.route) { popUpTo(0) } }
                 )
             }
-            composable(Dest.RegisterName.route) {
-                RegisterNameScreen(onNext = { nav.navigate(Dest.RegisterEmail.route) })
-            }
-            composable(Dest.RegisterEmail.route) {
-                RegisterEmailScreen(onNext = { nav.navigate(Dest.RegisterPassword.route) })
-            }
-            composable(Dest.RegisterPassword.route) {
-                RegisterPasswordScreen(onSuccess = {
-                    nav.navigate(Dest.RegisterSuccess.route) {
-                        popUpTo(Dest.Login.route) { inclusive = false }
-                    }
-                })
-            }
-            composable(Dest.RegisterSuccess.route) {
-                RegisterSuccessScreen(onGoHome = {
-                    nav.navigate(Dest.Home.route) { popUpTo(0) }
-                })
+
+            // ---------- REGISTER GRAPH (shared RegisterViewModel) ----------
+            navigation(startDestination = Dest.RegisterName.route, route = Dest.Register.route) {
+                registerGraph(nav)
             }
 
             // ---------- MAIN ----------
@@ -173,5 +155,44 @@ fun SajisehatApp() {
                 DetailScreen(id)
             }
         }
+    }
+}
+
+/**
+ * Semua pemanggilan composable tetap berada DI DALAM lambda `composable { ... }`.
+ * ViewModel dibagi bersama lewat parent graph "register" menggunakan ViewModelProvider
+ * (tidak bergantung pada overload `viewModel()` yang berbeda-beda antar versi).
+ */
+private fun NavGraphBuilder.registerGraph(nav: NavHostController) {
+    composable(Dest.RegisterName.route) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            nav.getBackStackEntry(Dest.Register.route)
+        }
+        val vm = ViewModelProvider(parentEntry)[RegisterViewModel::class.java]
+        RegisterNameScreen(vm = vm, onNext = { nav.navigate(Dest.RegisterEmail.route) })
+    }
+
+    composable(Dest.RegisterEmail.route) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            nav.getBackStackEntry(Dest.Register.route)
+        }
+        val vm = ViewModelProvider(parentEntry)[RegisterViewModel::class.java]
+        RegisterEmailScreen(vm = vm, onNext = { nav.navigate(Dest.RegisterPassword.route) })
+    }
+
+    composable(Dest.RegisterPassword.route) { backStackEntry ->
+        val parentEntry = remember(backStackEntry) {
+            nav.getBackStackEntry(Dest.Register.route)
+        }
+        val vm = ViewModelProvider(parentEntry)[RegisterViewModel::class.java]
+        RegisterPasswordScreen(vm = vm, onSuccess = {
+            nav.navigate(Dest.RegisterSuccess.route)
+        })
+    }
+
+    composable(Dest.RegisterSuccess.route) {
+        RegisterSuccessScreen(onGoHome = {
+            nav.navigate(Dest.Home.route) { popUpTo(0) }
+        })
     }
 }

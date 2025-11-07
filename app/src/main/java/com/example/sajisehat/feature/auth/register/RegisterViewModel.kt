@@ -30,11 +30,11 @@ class RegisterViewModel(
     private val _state = MutableStateFlow(RegisterState())
     val state = _state.asStateFlow()
 
-    fun updateFirst(s: String)       { _state.value = _state.value.copy(firstName = s, error = null) }
-    fun updateLast(s: String)        { _state.value = _state.value.copy(lastName = s, error = null) }
-    fun updateEmail(s: String)       { _state.value = _state.value.copy(email = s, error = null) }
-    fun updatePassword(s: String)    { _state.value = _state.value.copy(password = s, error = null) }
-    fun toggleRemember()             { _state.value = _state.value.copy(rememberMe = !_state.value.rememberMe) }
+    fun updateFirst(s: String)    { _state.value = _state.value.copy(firstName = s, error = null) }
+    fun updateLast(s: String)     { _state.value = _state.value.copy(lastName = s, error = null) }
+    fun updateEmail(s: String)    { _state.value = _state.value.copy(email = s, error = null) }
+    fun updatePassword(s: String) { _state.value = _state.value.copy(password = s, error = null) }
+    fun toggleRemember()          { _state.value = _state.value.copy(rememberMe = !_state.value.rememberMe) }
 
     fun moveToEmail()    { _state.value = _state.value.copy(step = RegisterStep.EMAIL) }
     fun moveToPassword() { _state.value = _state.value.copy(step = RegisterStep.PASSWORD) }
@@ -47,7 +47,7 @@ class RegisterViewModel(
         val res = repo.registerEmail(st.email.trim(), st.password, display)
         _state.value = st.copy(loading = false, error = res.exceptionOrNull()?.localizedMessage)
         if (res.isSuccess) {
-            markDone()
+            markDone() // 100%
             onSuccess()
         }
     }
