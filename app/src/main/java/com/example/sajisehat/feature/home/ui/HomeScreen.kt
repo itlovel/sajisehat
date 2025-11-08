@@ -24,6 +24,7 @@ import coil.compose.AsyncImage
 import com.example.sajisehat.feature.topbar.TopBarEvent
 import com.example.sajisehat.feature.topbar.TopBarViewModel
 import com.example.sajisehat.ui.components.topbar.AppTopBar
+import com.example.sajisehat.ui.theme.SajiTextStyles
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -114,7 +115,7 @@ private fun TipCarousel(
             shape = RoundedCornerShape(16.dp),
             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
         ) { Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Tip belum tersedia", style = MaterialTheme.typography.bodyMedium)
+            Text("Tip belum tersedia", style = SajiTextStyles.Body)
         } }
         return
     }
@@ -163,11 +164,11 @@ private fun TipCard(item: TipUi) {
             Column(Modifier.weight(1.6f)) {
                 Text(
                     "\uD83D\uDC40 Tip Of The Day",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    style = SajiTextStyles.BodyLargeBold,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
                 Spacer(Modifier.height(6.dp))
-                Text(item.text, style = MaterialTheme.typography.bodyMedium,
+                Text(item.text, style = SajiTextStyles.Caption,
                     color = MaterialTheme.colorScheme.onSecondaryContainer)
             }
         }
@@ -249,19 +250,19 @@ private fun SugarTrackCard(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(title, style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
+            Text(title, style = SajiTextStyles.H5Bold,
                 color = MaterialTheme.colorScheme.primary, textAlign = TextAlign.Center)
             Spacer(Modifier.height(4.dp))
-            Text("Konsumsi Gulamu:", style = MaterialTheme.typography.bodySmall,
+            Text("Konsumsi Gulamu:", style = SajiTextStyles.BodySemibold,
                 color = MaterialTheme.colorScheme.onSurface)
             Spacer(Modifier.height(12.dp))
             Text(grams.toString(), style = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.ExtraBold),
                 color = MaterialTheme.colorScheme.onSurface)
             Spacer(Modifier.height(6.dp))
-            Text("Gram Gula", style = MaterialTheme.typography.labelLarge,
+            Text("Gram Gula", style = SajiTextStyles.BodyBold,
                 color = MaterialTheme.colorScheme.secondary)
             Spacer(Modifier.height(8.dp))
-            Text(note, style = MaterialTheme.typography.bodySmall,
+            Text(note, style = SajiTextStyles.CaptionSemibold,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
                 textAlign = TextAlign.Center)
         }

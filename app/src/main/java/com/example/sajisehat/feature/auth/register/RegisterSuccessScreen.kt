@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.sajisehat.R
+import com.example.sajisehat.ui.theme.SajiTextStyles
 import kotlinx.coroutines.delay
 
 @Composable
@@ -61,11 +62,11 @@ fun RegisterSuccessScreen(onGoHome: () -> Unit) {
                 Column {
                     Text(
                         text = "buat akun",
-                        style = MaterialTheme.typography.labelLarge
+                        style = SajiTextStyles.BodyBold
                     )
                     Text(
                         text = "sukses",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold)
+                        style = SajiTextStyles.H5Bold
                     )
                 }
             }

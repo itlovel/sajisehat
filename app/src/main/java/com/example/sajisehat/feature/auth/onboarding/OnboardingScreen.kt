@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sajisehat.R
+import com.example.sajisehat.ui.theme.SajiTextStyles
 import kotlinx.coroutines.launch
 
 @Composable
@@ -81,12 +82,8 @@ fun OnboardingScreen(
             ) {
                 Text(
                     text = p.title,
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 27.sp,
-                        lineHeight = 32.sp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    ),
+                    style = SajiTextStyles.H4Bold,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(0.92f)
                 )
@@ -95,11 +92,7 @@ fun OnboardingScreen(
 
                 Text(
                     text = p.desc,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontSize = 14.sp,
-                        lineHeight = 20.sp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    ),
+                    style = SajiTextStyles.Body,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(0.72f)
                 )

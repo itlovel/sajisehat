@@ -27,6 +27,7 @@ import com.example.sajisehat.R
 import com.example.sajisehat.feature.topbar.TopBarEvent
 import com.example.sajisehat.feature.topbar.TopBarViewModel
 import com.example.sajisehat.ui.components.topbar.AppTopBar
+import com.example.sajisehat.ui.theme.SajiTextStyles
 
 @Composable
 fun ProfileScreen(
@@ -103,15 +104,13 @@ fun ProfileScreen(
                     ) {
                         Text(
                             text = st.displayName.ifBlank { "Pengguna" },
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.ExtraBold
-                            ),
+                            style = SajiTextStyles.BodyLargeBold,
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                         Spacer(Modifier.height(6.dp))
                         Text(
                             text = st.email.ifBlank { "-" },
-                            style = MaterialTheme.typography.labelLarge,
+                            style = SajiTextStyles.BodyLargeBold,
                             color = MaterialTheme.colorScheme.secondary   // kuning aksen
                         )
                     }
@@ -169,13 +168,11 @@ fun ProfileScreen(
                 Column {
                     Text(
                         text = "SAJISEHAT Ver. 1.0",
-                        style = MaterialTheme.typography.titleSmall.copy(
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        style = SajiTextStyles.BodyBold
                     )
                     Text(
                         text = "Baca Labelnya, Jaga Gula-nya, Sehat Raganya!",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = SajiTextStyles.Caption,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -197,7 +194,7 @@ fun ProfileScreen(
             ) {
                 Text(
                     text = "Log Out",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = SajiTextStyles.BodyLargeBold,
                     textAlign = TextAlign.Center
                 )
             }
@@ -229,7 +226,7 @@ private fun SettingRow(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
+                style = SajiTextStyles.BodySemibold,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f)
             )

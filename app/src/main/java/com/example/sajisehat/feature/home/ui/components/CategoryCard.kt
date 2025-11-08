@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Icon
 import com.example.sajisehat.R
+import com.example.sajisehat.ui.theme.SajiTextStyles
 
 enum class CategoryKind { AddManual, ReadArticle, WatchVideo }
 
@@ -57,7 +58,7 @@ fun CategoryCard(
         ) {
             Text(
                 text = "Kategori:",
-                style = MaterialTheme.typography.titleSmall,
+                style = SajiTextStyles.BodyLargeSemibold,
                 color = MaterialTheme.colorScheme.onPrimary
             )
             Spacer(Modifier.height(12.dp))
@@ -149,7 +150,7 @@ private fun CategoryButton(
         Spacer(Modifier.height(8.dp))
         Text(
             text = label,
-            style = MaterialTheme.typography.labelLarge,
+            style = SajiTextStyles.CaptionBold,
             color = textColor
         )
     }

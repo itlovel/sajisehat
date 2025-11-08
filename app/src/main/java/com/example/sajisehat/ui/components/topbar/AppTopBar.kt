@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.sajisehat.feature.topbar.TopBarEvent
 import com.example.sajisehat.feature.topbar.TopBarState
+import com.example.sajisehat.ui.theme.SajiTextStyles
 
 
 @Composable
@@ -73,16 +74,14 @@ fun AppTopBar(
             ) {
                 Text(
                     text = titleText,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
+                    style = SajiTextStyles.BodyLargeSemibold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 subtitleText?.let {
                     Spacer(Modifier.height(2.dp))
                     Text(
                         text = it,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = SajiTextStyles.Body,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.75f)
                     )
                 }

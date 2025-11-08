@@ -20,6 +20,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
+import com.example.sajisehat.ui.theme.SajiTextStyles
 
 @Composable
 fun CompactOutlinedTextField(
@@ -32,7 +33,7 @@ fun CompactOutlinedTextField(
     trailing: (@Composable (() -> Unit))? = null,
     isError: Boolean = false,
     shape: Shape = MaterialTheme.shapes.large,
-    textStyle: TextStyle = MaterialTheme.typography.bodyLarge.copy(
+    textStyle: TextStyle = SajiTextStyles.Body.copy(
         color = MaterialTheme.colorScheme.onSurface
     ),
     visualTransformation: VisualTransformation = VisualTransformation.None,

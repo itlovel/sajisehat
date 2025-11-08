@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sajisehat.R
+import com.example.sajisehat.ui.theme.SajiTextStyles
 
 @Composable
 fun SplashScreen(
@@ -59,7 +60,7 @@ fun SplashScreen(
 
                 Text(
                     text = "Baca Labelnya, Jaga Gula-nya,\nSehat Raganya!",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = SajiTextStyles.BodyLarge,
                     textAlign = TextAlign.Center
                 )
             }

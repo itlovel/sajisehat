@@ -19,6 +19,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.sajisehat.navigation.isOnRoute
 import com.example.sajisehat.navigation.navigateSingleTopTo
+import com.example.sajisehat.ui.theme.SajiTextStyles
 
 @Composable
 fun AppBottomBar(
@@ -94,7 +95,7 @@ fun AppBottomBar(
                                 else Color.Unspecified
                             )
                         },
-                        label = { if (showLabels) Text(item.label, style = MaterialTheme.typography.labelLarge) },
+                        label = { if (showLabels) Text(item.label, style = SajiTextStyles.Caption) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = MaterialTheme.colorScheme.secondary,
                             selectedTextColor = MaterialTheme.colorScheme.secondary,
@@ -116,7 +117,7 @@ fun AppBottomBar(
                     if (showLabels) {
                         Text(
                             centerLabel,
-                            style = MaterialTheme.typography.labelLarge,
+                            style = SajiTextStyles.Caption,
                             color = if (centerSelected)
                                 MaterialTheme.colorScheme.secondary
                             else
@@ -144,7 +145,7 @@ fun AppBottomBar(
                                 else Color.Unspecified
                             )
                         },
-                        label = { if (showLabels) Text(item.label, style = MaterialTheme.typography.labelLarge) },
+                        label = { if (showLabels) Text(item.label, style = SajiTextStyles.Caption) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = MaterialTheme.colorScheme.secondary,
                             selectedTextColor = MaterialTheme.colorScheme.secondary,

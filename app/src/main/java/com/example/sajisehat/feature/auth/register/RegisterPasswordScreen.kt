@@ -18,6 +18,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.KeyboardOptions
 import com.example.sajisehat.ui.components.CompactOutlinedTextField
+import com.example.sajisehat.ui.theme.SajiTextStyles
 
 @Composable
 fun RegisterPasswordScreen(
@@ -37,11 +38,11 @@ fun RegisterPasswordScreen(
         ) {
             RegisterProgress(title = "buat akun", percent = st.stepPercent)
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(50.dp))
 
             Text(
                 text = "Atur Kata Sandi Anda",
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold)
+                style = SajiTextStyles.H4Bold
             )
 
             Spacer(Modifier.height(16.dp))
@@ -51,10 +52,9 @@ fun RegisterPasswordScreen(
             CompactOutlinedTextField(
                 value = st.email,
                 onValueChange = {},
-                textStyle = MaterialTheme.typography.bodyLarge.copy(
+                textStyle = SajiTextStyles.Body.copy(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 ),
-                placeholder = "nama@domain.com",
                 shape = MaterialTheme.shapes.large
             )
 
@@ -88,7 +88,7 @@ fun RegisterPasswordScreen(
             Spacer(Modifier.height(6.dp))
             Text(
                 text = "Password must be 6+ characters",
-                style = MaterialTheme.typography.labelMedium,
+                style = SajiTextStyles.CaptionSemibold,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
@@ -115,7 +115,7 @@ fun RegisterPasswordScreen(
                 }
                 ClickableText(
                     text = txt,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = SajiTextStyles.CaptionSemibold,
                     onClick = { /* TODO: buka halaman bantuan jika ada */ }
                 )
             }
@@ -123,7 +123,7 @@ fun RegisterPasswordScreen(
             // Error (jika ada)
             st.error?.let {
                 Spacer(Modifier.height(8.dp))
-                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                Text(it, color = MaterialTheme.colorScheme.error, style = SajiTextStyles.Caption)
             }
 
             Spacer(Modifier.height(24.dp))
@@ -147,7 +147,7 @@ fun RegisterPasswordScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("Lanjut", style = MaterialTheme.typography.titleMedium)
+                    Text("Lanjut", style = SajiTextStyles.BodyLargeBold)
                 }
             }
         }
@@ -164,7 +164,7 @@ private fun RequiredLabel(text: String) {
     }
     Text(
         text = label,
-        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium),
+        style = SajiTextStyles.Body,
         color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier
             .fillMaxWidth()
