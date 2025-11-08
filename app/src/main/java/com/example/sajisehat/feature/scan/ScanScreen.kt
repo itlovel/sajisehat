@@ -14,10 +14,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.sajisehat.navigation.Dest
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import kotlinx.coroutines.launch
+
+@Composable
+fun ScanScreen(
+    state: ScanUiState,
+    onRequestCameraPermission: () -> Unit,
+    onScanAgain: () -> Unit,
+    onToggleExpanded: () -> Unit,
+    onPickFromGallery: () -> Unit,
+    onBackFromResult: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    when (state.step) {
+        ScanStep.PERMISSION -> ScanPermissionSection(
+            permissionStatus = state.permissionStatus,
+            onGrantClick = onRequestCameraPermission
+        )
+
+        ScanStep.SCANNING -> ScanCameraSection(
+            isProcessing = state.isProcessing,
+            onPickFromGallery = onPickFromGallery
+        )
+
+        ScanStep.PROCESSING -> ScanCameraSection(
+            isProcessing = true,
+            onPickFromGallery = onPickFromGallery
+        )
+
+        ScanStep.RESULT -> ScanResultSection(
+            result = state.lastResult,
+            isExpanded = state.isExpandedInfo,
+            onToggleExpanded = onToggleExpanded,
+            onScanAgain = onScanAgain,
+            onBack = onBackFromResult
+        )
+    }
+}
+
 
 @Composable
 fun ScanRoute(
@@ -57,12 +95,20 @@ fun ScanRoute(
                 page.imageUri?.let { uris.add(it) }
             }
             if (uris.isNotEmpty()) {
+                // proses seperti biasa → isi lastResult + step RESULT di ViewModel
                 viewModel.onScanImagesResult(uris)
+                // ❗ JANGAN navigate ke Home di sini, biarkan ScanScreen menampilkan hasil
+                return@rememberLauncherForActivityResult
             }
+        }
+
+        // sampai sini: user cancel / error / nggak ada uri → balik ke Home
+        navController.navigate(Dest.Home.route) {
+            popUpTo(Dest.Home.route) { inclusive = false }
         }
     }
 
-    // launcher galeri manual (pakai GetContent)
+    // launcher galeri manual (pakai GetContent) – masih bisa dipakai dari layar hasil
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -82,24 +128,19 @@ fun ScanRoute(
                         e.message ?: "Gagal memulai scanner."
                     )
                 }
+                // kalau scanner gagal banget → balik ke Home
+                navController.navigate(Dest.Home.route) {
+                    popUpTo(Dest.Home.route) { inclusive = false }
+                }
             }
     }
 
-    // FLAG supaya tidak auto-scan berkali-kali
-    var hasRequestedScan by remember { mutableStateOf(false) }
-
-    // Auto jalankan scanner saat masuk step SCANNING
-    LaunchedEffect(state.step) {
-        if (state.step == ScanStep.SCANNING && !state.isProcessing && !hasRequestedScan) {
-            hasRequestedScan = true
-            startScan()
-        }
-        if (state.step != ScanStep.SCANNING) {
-            hasRequestedScan = false
-        }
+    // === AUTO SCAN SEKALI SAAT MASUK HALAMAN SCAN ===
+    LaunchedEffect(Unit) {
+        startScan()
     }
 
-    // snackbar error dari ViewModel
+    // snackbar error dari ViewModel (tetap dipakai)
     LaunchedEffect(state.errorMessage) {
         val msg = state.errorMessage
         if (!msg.isNullOrBlank()) {
@@ -108,66 +149,34 @@ fun ScanRoute(
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) { padding ->
-        ScanScreen(
-            state = state,
-            onRequestCameraPermission = {
-                // nanti bisa ganti pakai permission launcher beneran,
-                // sekarang kita langsung set granted saja.
-                viewModel.onCameraPermissionResult(
-                    granted = true,
-                    permanentlyDenied = false
-                )
-            },
-            onScanAgain = { viewModel.onScanAgainClicked() },
-            onToggleExpanded = { viewModel.onToggleExpanded() },
-            onPickFromGallery = { galleryLauncher.launch("image/*") },
-            onBackFromResult = {
-                // behavior back dari layar hasil:
-                // di sini aku bikin sama seperti "Scan Lagi" (balik ke kamera)
-                viewModel.onScanAgainClicked()
-                // kalau mau keluar dari tab Scan, ganti dengan:
-                // navController.popBackStack()
-            },
-            modifier = modifier.padding(padding)
-        )
+    // TAMPILKAN UI HASIL HANYA KALAU SUDAH ADA RESULT
+    if (state.step == ScanStep.RESULT) {
+        Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        ) { padding ->
+            ScanScreen(
+                state = state,
+                // permission nggak dipakai lagi, tapi kalau kepanggil kita langsung scan aja
+                onRequestCameraPermission = {
+                    startScan()
+                },
+                // "Scan Lagi" dari layar hasil → langsung buka scanner lagi
+                onScanAgain = {
+                    // reset state kalau perlu
+                    viewModel.onScanAgainClicked()
+                    startScan()
+                },
+                onToggleExpanded = { viewModel.onToggleExpanded() },
+                onPickFromGallery = { galleryLauncher.launch("image/*") },
+                onBackFromResult = {
+                    // back dari halaman hasil → balik ke Home
+                    navController.navigate(Dest.Home.route) {
+                        popUpTo(Dest.Home.route) { inclusive = false }
+                    }
+                },
+                modifier = modifier.padding(padding)
+            )
+        }
     }
-}
-
-@Composable
-fun ScanScreen(
-    state: ScanUiState,
-    onRequestCameraPermission: () -> Unit,
-    onScanAgain: () -> Unit,
-    onToggleExpanded: () -> Unit,
-    onPickFromGallery: () -> Unit,
-    onBackFromResult: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    when (state.step) {
-        ScanStep.PERMISSION -> ScanPermissionSection(
-            permissionStatus = state.permissionStatus,
-            onGrantClick = onRequestCameraPermission
-        )
-
-        ScanStep.SCANNING -> ScanCameraSection(
-            isProcessing = state.isProcessing,
-            onPickFromGallery = onPickFromGallery
-        )
-
-        ScanStep.PROCESSING -> ScanCameraSection(
-            isProcessing = true,
-            onPickFromGallery = onPickFromGallery
-        )
-
-        ScanStep.RESULT -> ScanResultSection(
-            result = state.lastResult,
-            isExpanded = state.isExpandedInfo,
-            onToggleExpanded = onToggleExpanded,
-            onScanAgain = onScanAgain,
-            onBack = onBackFromResult
-        )
-    }
+    // else: sebelum ada result, kita nggak gambar apa-apa → user hanya lihat UI kamera ML Kit
 }
