@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sajisehat.R
 import com.example.sajisehat.di.AppGraph
+import com.example.sajisehat.feature.topbar.TopBarChild
 
 @Composable
 private fun DailySugarSummaryCard(
@@ -157,25 +158,9 @@ fun SaveToTrekScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Simpan Produk dalam Trek",
-                        color = Color.White
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Kembali",
-                            tint = Color.White
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF002A7A)   // biru tua figma
-                )
+            TopBarChild(
+                title = "Simpan Produk dalam Trek",
+                onBack = onBack
             )
         }
     ) { innerPadding ->

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.sajisehat.R
+import com.example.sajisehat.feature.topbar.TopBarChild
 
 @Composable
 fun ScanResultSection(
@@ -42,7 +43,10 @@ fun ScanResultSection(
         Column(
             modifier = modifier.fillMaxSize()
         ) {
-            ResultTopAppBar(onBack = onBack)
+            TopBarChild(
+                title = "Scan Label",
+                onBack = onBack
+            )
 
             Box(
                 modifier = Modifier
@@ -66,7 +70,10 @@ fun ScanResultSection(
         modifier = modifier.fillMaxSize()
     ) {
         // ========= APP BAR =========
-        ResultTopAppBar(onBack = onBack)
+        TopBarChild(
+            title = "Scan Label",
+            onBack = onBack
+        )
 
         // ========= BODY =========
         Column(
@@ -247,46 +254,6 @@ fun ScanResultSection(
                 }
 
             }
-        }
-    }
-}
-
-// ========== APP BAR DENGAN SUDUT BAWAH ROUNDED ==========
-@Composable
-private fun ResultTopAppBar(
-    onBack: () -> Unit
-) {
-    Surface(
-        color = Color(0xFF002A7A),
-        shape = RoundedCornerShape(
-            bottomStart = 16.dp,
-            bottomEnd = 16.dp
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_back), // ganti dengan icon back-mu
-                    contentDescription = "Kembali",
-                    tint = Color.White
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                text = "Scan Label",
-                color = Color.White,
-                style = MaterialTheme.typography.titleLarge
-            )
         }
     }
 }
