@@ -15,6 +15,7 @@ class AppPrefs(private val context: Context) {
     private object Keys {
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
         val REMEMBER_ME     = booleanPreferencesKey("remember_me")
+        val CAMERA_GRANTED  = booleanPreferencesKey("camera_granted")
     }
 
     val onboardingDone: Flow<Boolean> =
@@ -23,6 +24,12 @@ class AppPrefs(private val context: Context) {
     val rememberMe: Flow<Boolean> =
         context.dataStore.data.map { prefs: Preferences -> prefs[Keys.REMEMBER_ME] ?: false }
 
+    // camera
+    val cameraGranted: Flow<Boolean> =
+        context.dataStore.data.map { prefs: Preferences ->
+            prefs[Keys.CAMERA_GRANTED] ?: false
+        }
+
     suspend fun setOnboardingDone(done: Boolean) {
         context.dataStore.edit { it[Keys.ONBOARDING_DONE] = done }
     }
@@ -30,4 +37,9 @@ class AppPrefs(private val context: Context) {
     suspend fun setRememberMe(v: Boolean) {
         context.dataStore.edit { it[Keys.REMEMBER_ME] = v }
     }
+
+    suspend fun setCameraGranted(granted: Boolean) {
+        context.dataStore.edit { it[Keys.CAMERA_GRANTED] = granted }
+    }
+
 }
