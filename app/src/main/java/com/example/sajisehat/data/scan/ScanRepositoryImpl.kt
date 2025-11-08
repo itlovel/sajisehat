@@ -22,15 +22,11 @@ class ScanRepositoryImpl(
         imageUris: List<Uri>
     ): Result<NutritionScanResult> {
         return try {
-            // 1. OCR: gabungkan teks dari semua halaman
             val rawText = documentScannerDataSource.readTextFromDocumentPages(
                 context = appContext,
                 imageUris = imageUris
             )
-
-            // 2. Parsing label gizi
             val parsed = nutritionLabelParser.parse(rawText)
-
             Result.success(parsed)
         } catch (t: Throwable) {
             Result.failure(t)
