@@ -19,6 +19,7 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun ScanScreen(
@@ -74,6 +75,9 @@ fun ScanRoute(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+
+    // 🔹 FLAG: sudah pernah auto-start scan?
+    var hasStartedScan by rememberSaveable { mutableStateOf(false) }
 
     // === ML Kit Document Scanner options & client ===
     val scannerOptions = remember {
@@ -138,8 +142,11 @@ fun ScanRoute(
     }
 
     // === AUTO SCAN SEKALI SAAT MASUK HALAMAN SCAN ===
-    LaunchedEffect(Unit) {
-        startScan()
+    LaunchedEffect(hasStartedScan) {
+        if (!hasStartedScan) {
+            hasStartedScan = true
+            startScan()
+        }
     }
 
     // snackbar error dari ViewModel (tetap dipakai)
