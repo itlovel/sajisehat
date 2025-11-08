@@ -156,7 +156,18 @@ fun SajisehatApp() {
             composable(Dest.Trek.route)    { TrekScreen() }
             composable(Dest.Scan.route)    { ScanScreen() }
             composable(Dest.Catalog.route) { CatalogScreen() }
-            composable(Dest.Profile.route) { ProfileScreen() }
+            composable(Dest.Profile.route) {
+                ProfileScreen(
+                    onGoSettingsMarkah = { /* nav.navigate("markah") */ },
+                    onGoNotificationSettings = { /* nav.navigate("notifSettings") */ },
+                    onLoggedOut = {
+                        nav.navigate(Dest.Login.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable(Dest.Detail.route)  { back ->
                 val id = back.arguments?.getString("id").orEmpty()
                 DetailScreen(id)

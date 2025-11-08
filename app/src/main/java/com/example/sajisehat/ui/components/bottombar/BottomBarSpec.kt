@@ -24,35 +24,41 @@ fun rememberBottomBarSpec(): BottomBarSpec {
     val fontScale = LocalDensity.current.fontScale.coerceIn(1f, 1.25f)
 
     return when {
+        // HP kecil (≤ 360dp)
         widthDp < 360 -> BottomBarSpec(
-            barHeight   = (62f * fontScale).dp,
-            iconSize    = 24.dp,
-            fabSize     = 52.dp,
-            fabIconSize = 24.dp,
-            fabOffsetY  = 24.dp,   // ↓ lebih turun
-            haloSize    = 56.dp,
+            barHeight   = (60f * fontScale).dp,
+            iconSize    = 15.dp,   // dulu 24
+            fabSize     = 40.dp,   // dulu 52
+            fabIconSize = 25.dp,   // dulu 24
+            fabOffsetY  = 20.dp,
+            haloSize    = 54.dp,
             spacerWidth = 70.dp,
             showLabels  = true
         )
+
+        // HP sedang (360–399dp)
         widthDp < 400 -> BottomBarSpec(
-            barHeight   = (68f * fontScale).dp,
-            iconSize    = 28.dp,
-            fabSize     = 56.dp,
-            fabIconSize = 26.dp,
-            fabOffsetY  = 28.dp,   // ↓ lebih turun lagi
-            haloSize    = 60.dp,
+            barHeight   = (66f * fontScale).dp,
+            iconSize    = 17.dp,   // dulu 28
+            fabSize     = 44.dp,   // dulu 56
+            fabIconSize = 27.dp,   // dulu 26
+            fabOffsetY  = 24.dp,
+            haloSize    = 58.dp,
             spacerWidth = 76.dp,
             showLabels  = true
         )
+
+        // HP lebar (≥ 400dp)
         else -> BottomBarSpec(
-            barHeight   = (72f * fontScale).dp,
-            iconSize    = 30.dp,
-            fabSize     = 60.dp,
-            fabIconSize = 28.dp,
-            fabOffsetY  = 30.dp,   // ↓
-            haloSize    = 64.dp,
+            barHeight   = (70f * fontScale).dp,
+            iconSize    = 19.dp,   // dulu 30
+            fabSize     = 48.dp,   // dulu 60
+            fabIconSize = 29.dp,   // dulu 28
+            fabOffsetY  = 26.dp,
+            haloSize    = 62.dp,
             spacerWidth = 82.dp,
             showLabels  = true
         )
     }
 }
+
