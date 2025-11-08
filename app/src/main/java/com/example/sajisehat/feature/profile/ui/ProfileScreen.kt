@@ -33,13 +33,12 @@ import com.example.sajisehat.ui.theme.SajiTextStyles
 fun ProfileScreen(
     onGoSettingsMarkah: () -> Unit = {},
     onGoNotificationSettings: () -> Unit = {},
-    onLoggedOut: () -> Unit = {},          // diarahkan ke Login/Splash dari SajisehatApp
+    onLoggedOut: () -> Unit = {},
     topBarVM: TopBarViewModel = viewModel(),
     vm: ProfileViewModel = viewModel()
 ) {
     val st by vm.state.collectAsState()
 
-    // Sinkronkan nama & avatar ke TopBar
     LaunchedEffect(st.photoUrl, st.displayName) {
         topBarVM.setUser(
             name = st.displayName.ifBlank { "Kamu" },
@@ -48,7 +47,7 @@ fun ProfileScreen(
     }
 
     val screenW = LocalConfiguration.current.screenWidthDp.dp
-    val cardWidth = screenW * 0.86f      // mirip lebar di Figma
+    val cardWidth = screenW * 0.70f
     val avatarSize = 88.dp
 
     Scaffold(
@@ -58,7 +57,6 @@ fun ProfileScreen(
                 onEvent = { evt ->
                     when (evt) {
                         TopBarEvent.OnAvatarClick -> {
-                            // sudah di halaman profil → tidak perlu navigasi
                         }
                         else -> topBarVM.onEvent(evt)
                     }
@@ -77,25 +75,21 @@ fun ProfileScreen(
         ) {
             Spacer(Modifier.height(24.dp))
 
-            // ===== KARTU NAMA/EMAIL (navy) + avatar menumpuk =====
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.TopCenter
             ) {
-                // Card navy di belakang
                 Surface(
                     shape = RoundedCornerShape(16.dp),
                     color = MaterialTheme.colorScheme.primary,
                     tonalElevation = 0.dp,
                     modifier = Modifier
                         .width(cardWidth)
-                        .padding(top = avatarSize / 2) // card turun setengah tinggi avatar
+                        .padding(top = avatarSize / 2)
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            // padding atas = setengah avatar + extra margin,
-                            // supaya teks di bawah avatar dan tidak tertutup
                             .padding(
                                 top = avatarSize / 2 + 12.dp,
                                 bottom = 20.dp
@@ -111,12 +105,11 @@ fun ProfileScreen(
                         Text(
                             text = st.email.ifBlank { "-" },
                             style = SajiTextStyles.BodyLargeBold,
-                            color = MaterialTheme.colorScheme.secondary   // kuning aksen
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }
 
-                // Avatar bulat di depan, menumpuk di atas card
                 Surface(
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.surface,
@@ -126,7 +119,6 @@ fun ProfileScreen(
                         .align(Alignment.TopCenter)
                 ) {
                     if (st.photoUrl.isNullOrBlank()) {
-                        // Placeholder lokal (misalnya ic_profile_placeholder.svg/png)
                         Image(
                             painter = painterResource(R.drawable.ic_profile_placeholder),
                             contentDescription = "Avatar",
@@ -145,16 +137,14 @@ fun ProfileScreen(
                 }
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(40.dp))
 
-            // ===== Dua baris menu =====
             SettingRow(title = "Markah", onClick = onGoSettingsMarkah)
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(20.dp))
             SettingRow(title = "Notifikasi", onClick = onGoNotificationSettings)
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(100.dp))
 
-            // ===== Brand + tagline =====
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = 8.dp)
@@ -180,7 +170,6 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            // ===== Tombol Logout =====
             Button(
                 onClick = { vm.logout(onLoggedOut) },
                 modifier = Modifier

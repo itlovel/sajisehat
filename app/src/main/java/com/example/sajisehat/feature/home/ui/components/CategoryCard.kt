@@ -36,7 +36,7 @@ fun CategoryCard(
 
 
     val screenW = LocalConfiguration.current.screenWidthDp.dp
-    val circleSize = (screenW * 0.13f).coerceIn(44.dp, 64.dp)
+    val circleSize = (screenW * 0.13f).coerceIn(40.dp, 40.dp)
     val iconSize   = (circleSize * 0.48f).coerceIn(20.dp, 32.dp)
 
     Surface(
@@ -50,7 +50,7 @@ fun CategoryCard(
                     Brush.verticalGradient(
                         listOf(
                             MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.85f)
+                            MaterialTheme.colorScheme.inversePrimary.copy(alpha = 0.85f)
                         )
                     )
                 )
@@ -58,10 +58,10 @@ fun CategoryCard(
         ) {
             Text(
                 text = "Kategori:",
-                style = SajiTextStyles.BodyLargeSemibold,
+                style = SajiTextStyles.BodySemibold,
                 color = MaterialTheme.colorScheme.onPrimary
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(24.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

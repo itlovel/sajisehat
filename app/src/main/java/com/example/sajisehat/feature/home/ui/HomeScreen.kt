@@ -1,6 +1,7 @@
 package com.example.sajisehat.feature.home.ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -14,6 +15,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
@@ -60,7 +63,7 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(30.dp))
 
             TipCarousel(
                 tips = st.tips,
@@ -68,7 +71,7 @@ fun HomeScreen(
                 error = st.errorTips
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(25.dp))
 
             CategoryCard(
                 onAddManual  = { onOpen("addManual") },
@@ -76,7 +79,7 @@ fun HomeScreen(
                 onWatchVideo = { onOpen("videos") }
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(20.dp))
 
             SugarTrackCarousel(
                 day = st.dayGrams,
@@ -85,7 +88,7 @@ fun HomeScreen(
                 loading = st.loadingSugar
             )
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(30.dp))
         }
     }
 }
@@ -143,12 +146,14 @@ private fun TipCard(item: TipUi) {
         modifier = Modifier.fillMaxSize(),
         shape = RoundedCornerShape(16.dp),
         tonalElevation = 0.dp,
-        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.35f)
-    ) {
+        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.50f)
+    )
+    {
         Row(
-            modifier = Modifier.fillMaxSize().padding(14.dp),
+            modifier = Modifier.fillMaxSize().padding(24.dp),
             verticalAlignment = Alignment.CenterVertically
-        ) {
+
+        )  {
             Surface(
                 shape = RoundedCornerShape(12.dp),
                 color = MaterialTheme.colorScheme.surfaceVariant,
@@ -195,6 +200,20 @@ private fun SugarTrackCarousel(
     val pager = rememberPagerState(initialPage = 1) { pages.size } // default "MINGGU INI"
     val scope = rememberCoroutineScope()
     val width = LocalConfiguration.current.screenWidthDp.dp
+
+    val widthDp = LocalConfiguration.current.screenWidthDp
+    val arrowButtonSize = when {
+        widthDp < 360 -> 66.dp   // HP kecil
+        widthDp < 400 -> 70.dp   // HP sedang
+        else          -> 74.dp   // HP lebar
+    }
+    val arrowIconSize = when {
+        widthDp < 360 -> 60.dp
+        widthDp < 400 -> 62.dp
+        else          -> 64.dp
+    }
+
+
     val cardHeight = (width * 0.62f).coerceIn(220.dp, 300.dp)
 
     if (loading) {
@@ -223,15 +242,25 @@ private fun SugarTrackCarousel(
             onClick = { scope.launch { pager.animateScrollToPage((pager.currentPage - 1).coerceAtLeast(0)) } },
             enabled = pager.currentPage > 0,
             modifier = Modifier.align(Alignment.CenterStart).padding(start = 8.dp)
-                .clip(CircleShape).size(40.dp)
-        ) { Icon(Icons.Rounded.ChevronLeft, contentDescription = "Sebelumnya") }
+                .clip(CircleShape).size(arrowButtonSize)
+        ) { Icon(
+            Icons.Rounded.ChevronLeft,
+            contentDescription = "Sebelumnya",
+            modifier = Modifier.size(arrowIconSize)
+        )
+        }
 
         IconButton(
             onClick = { scope.launch { pager.animateScrollToPage((pager.currentPage + 1).coerceAtMost(pages.lastIndex)) } },
             enabled = pager.currentPage < pages.lastIndex,
             modifier = Modifier.align(Alignment.CenterEnd).padding(end = 8.dp)
-                .clip(CircleShape).size(40.dp)
-        ) { Icon(Icons.Rounded.ChevronRight, contentDescription = "Berikutnya") }
+                .clip(CircleShape).size(arrowButtonSize)
+        ) { Icon(
+            Icons.Rounded.ChevronRight,
+            contentDescription = "Berikutnya",
+            modifier = Modifier.size(arrowIconSize)
+        )
+        }
     }
 }
 
@@ -244,7 +273,7 @@ private fun SugarTrackCard(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surface
+        color = MaterialTheme.colorScheme.outline
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 18.dp),

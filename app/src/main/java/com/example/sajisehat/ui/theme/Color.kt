@@ -15,12 +15,12 @@ val Neutral20      = Color(0xFF1B1E24)
 val Neutral30      = Color(0xFF2A2F37)
 val Neutral40      = Color(0xFF3C424D)
 val Neutral60      = Color(0xFF7B8394)
-val Neutral80      = Color(0xFFB9C0CF)
+val Neutral80      = Color(0xFFEBEBEB)
 val Neutral95      = Color(0xFFF0F1F5)
 
 // State tokens (adjust to your DS)
 val Success = Color(0xFF2E7D32)
-val Warning = Color(0xFFF9A825)
+val Warning = Color(0xFFFFFFF89)
 val Error   = Color(0xFFB00020)
 
 // ---- Material 3 semantic mapping
@@ -35,7 +35,7 @@ val LightColors = lightColorScheme(
 
     secondary      = BrandYellow,
     onSecondary    = Color(0xFF1B1B1B),
-    secondaryContainer = BrandYellow,
+    secondaryContainer = Warning,
     onSecondaryContainer = Color(0xFF1B1B1B),
 
     background     = BrandCream,      // light page bg

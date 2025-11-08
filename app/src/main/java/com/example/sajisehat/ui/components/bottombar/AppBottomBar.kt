@@ -46,7 +46,6 @@ fun AppBottomBar(
             .padding(bottom = 12.dp)
             .navigationBarsPadding()
     ) {
-        // navy "halo" setengah keluar di atas bar
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -56,7 +55,6 @@ fun AppBottomBar(
                 .background(MaterialTheme.colorScheme.primary, CircleShape)
         )
 
-        // HANYA sudut atas yang melengkung, bawah kotak (0.dp)
         val barShape = RoundedCornerShape(
             topStart = corner, topEnd = corner,
             bottomStart = 0.dp, bottomEnd = 0.dp
