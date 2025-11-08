@@ -21,15 +21,19 @@ enum class SugarLevel {
     RENDAH, SEDANG, TINGGI
 }
 
+/**
+ * Hasil scan yang sudah “siap tampil” di UI.
+ * (nama produk nanti user isi sendiri di screen berikutnya)
+ */
 data class ScanResultUi(
-    val productName: String? = null,
-    val servingSizeGram: Double? = null,
-    val servingsPerPack: Int? = null,
-    val sugarPerServingGram: Double? = null,
-    val sugarPerPackGram: Double? = null,
-    val dailyPercent: Int? = null,
-    val sugarLevel: SugarLevel? = null,
-    val rawText: String? = null
+    val productName: String? = null,          // sekarang belum dipakai di UI
+    val servingSizeGram: Double? = null,      // takaran saji (gram)
+    val servingsPerPack: Int? = null,         // jumlah sajian per kemasan
+    val sugarPerServingGram: Double? = null,  // gula per 1 takaran saji
+    val sugarPerPackGram: Double? = null,     // gula total per kemasan (optional)
+    val dailyPercent: Int? = null,            // % kebutuhan gula harian
+    val sugarLevel: SugarLevel? = null,       // Rendah / Sedang / Tinggi
+    val rawText: String? = null               // teks OCR (buat debug)
 )
 
 /**

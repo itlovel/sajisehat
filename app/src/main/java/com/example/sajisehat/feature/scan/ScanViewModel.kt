@@ -165,4 +165,17 @@ class ScanViewModel(
             rawText = result.rawText
         )
     }
+
+    private fun categorizeSugar(sugarPerServing: Double?): SugarCategory {
+        if (sugarPerServing == null) return SugarCategory.UNKNOWN
+
+        return when {
+            sugarPerServing <= 5.0  -> SugarCategory.LOW      // Rendah (0–5 g)
+            sugarPerServing <= 15.0 -> SugarCategory.MEDIUM   // Sedang (6–15 g)
+            else                    -> SugarCategory.HIGH     // Tinggi (>15 g)
+        }
+    }
+
+    enum class SugarCategory { LOW, MEDIUM, HIGH, UNKNOWN }
+
 }

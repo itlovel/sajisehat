@@ -1,13 +1,14 @@
 package com.example.sajisehat.feature.scan
 
 import android.app.Activity
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,10 +18,6 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import kotlinx.coroutines.launch
-
-
-
-import android.net.Uri
 
 @Composable
 fun ScanRoute(
@@ -117,29 +114,36 @@ fun ScanRoute(
         ScanScreen(
             state = state,
             onRequestCameraPermission = {
+                // nanti bisa ganti pakai permission launcher beneran,
+                // sekarang kita langsung set granted saja.
                 viewModel.onCameraPermissionResult(
                     granted = true,
                     permanentlyDenied = false
                 )
             },
-            onStartScan = { /* sekarang dipanggil otomatis via LaunchedEffect */ },
             onScanAgain = { viewModel.onScanAgainClicked() },
             onToggleExpanded = { viewModel.onToggleExpanded() },
             onPickFromGallery = { galleryLauncher.launch("image/*") },
+            onBackFromResult = {
+                // behavior back dari layar hasil:
+                // di sini aku bikin sama seperti "Scan Lagi" (balik ke kamera)
+                viewModel.onScanAgainClicked()
+                // kalau mau keluar dari tab Scan, ganti dengan:
+                // navController.popBackStack()
+            },
             modifier = modifier.padding(padding)
         )
     }
 }
 
-
 @Composable
 fun ScanScreen(
     state: ScanUiState,
     onRequestCameraPermission: () -> Unit,
-    onStartScan: () -> Unit,
     onScanAgain: () -> Unit,
     onToggleExpanded: () -> Unit,
-    onPickFromGallery: () -> Unit,        // 👈 tambah
+    onPickFromGallery: () -> Unit,
+    onBackFromResult: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (state.step) {
@@ -162,9 +166,8 @@ fun ScanScreen(
             result = state.lastResult,
             isExpanded = state.isExpandedInfo,
             onToggleExpanded = onToggleExpanded,
-            onScanAgain = onScanAgain
+            onScanAgain = onScanAgain,
+            onBack = onBackFromResult
         )
     }
 }
-
-
