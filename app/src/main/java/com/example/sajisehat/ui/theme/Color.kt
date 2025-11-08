@@ -6,8 +6,9 @@ import androidx.compose.material3.lightColorScheme
 
 
 // ---- Brand tokens (literal colors from your design system)
-val BrandNavy      = Color(0xFF0D1B52) // TODO: replace with your navy
-val BrandYellow    = Color(0xFFF3B21A) // TODO: replace with your yellow
+val BrandNavy      = Color(0xFF000957) // TODO: replace with your navy
+val Another = Color(0xFF545A8E)
+val BrandYellow    = Color(0xFFFFB200) // TODO: replace with your yellow
 val BrandCream     = Color(0xFFF6F6FA) // light background neutral (optional)
 val Neutral10      = Color(0xFF0F1115) // darkest
 val Neutral20      = Color(0xFF1B1E24)
@@ -29,13 +30,16 @@ val LightColors = lightColorScheme(
     primaryContainer = BrandNavy,     // navy surfaces (you can create a lighter navy if needed)
     onPrimaryContainer = Color.White,
 
+    Another,
+
+
     secondary      = BrandYellow,
     onSecondary    = Color(0xFF1B1B1B),
     secondaryContainer = BrandYellow,
     onSecondaryContainer = Color(0xFF1B1B1B),
 
     background     = BrandCream,      // light page bg
-    onBackground   = Neutral20,
+    onBackground   = Neutral10,
 
     surface        = Color.White,     // cards/sheets
     onSurface      = Neutral20,
@@ -53,6 +57,7 @@ val DarkColors = darkColorScheme(
 
     secondary      = BrandNavy,
     onSecondary    = Color.White,
+
 
     background     = Neutral10,
     onBackground   = Color(0xFFECECEC),

@@ -85,7 +85,7 @@ fun OnboardingScreen(
                     style = SajiTextStyles.H4Bold,
                     color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(0.92f)
+                    modifier = Modifier.fillMaxWidth(0.96f)
                 )
 
                 Spacer(Modifier.height(20.dp))
@@ -94,7 +94,7 @@ fun OnboardingScreen(
                     text = p.desc,
                     style = SajiTextStyles.Body,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(0.72f)
+                    modifier = Modifier.fillMaxWidth(0.85f)
                 )
 
                 Spacer(Modifier.weight(1f))

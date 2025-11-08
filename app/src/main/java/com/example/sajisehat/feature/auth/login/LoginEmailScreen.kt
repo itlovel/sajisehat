@@ -61,6 +61,7 @@ fun LoginEmailScreen(
             Text(
                 text = "SAJISEHAT",
                 style = SajiTextStyles.H5Bold,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center
             )
 
@@ -68,7 +69,7 @@ fun LoginEmailScreen(
             Text(
                 text = "Masuk dengan akun yang sudah ada",
                 style = SajiTextStyles.Body,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center
             )
 
@@ -175,10 +176,10 @@ fun LoginEmailScreen(
     }
 }
 
-/** Label wajib dengan tanda * berwarna aksen, diletakkan DI ATAS field. */
+
 @Composable
 private fun RequiredLabel(text: String) {
-    val starColor = MaterialTheme.colorScheme.secondary
+    val starColor = MaterialTheme.colorScheme.background
     val label = buildAnnotatedString {
         append(text)
         append(" ")

@@ -114,10 +114,7 @@ fun LoginScreen(
                 Text(
                     text = "SAJISEHAT",
                     style = SajiTextStyles.H5Bold,
-//                        .copy(
-//                        fontWeight = FontWeight.ExtraBold,
-//                        fontSize = (22 * scale).sp
-//                    ),
+                    color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
 
@@ -126,9 +123,8 @@ fun LoginScreen(
                 Text(
                     text = "Cek gula, pantau konsumsi gula, dan temukan tips sehat untuk hidup lebih seimbang",
                     style = SajiTextStyles.Body,
-//                        .copy(fontSize = (14 * scale).sp)
+                    color = MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center,
-//                    lineHeight = (20 * scale).sp,
                     modifier = Modifier.padding(horizontal = s(4))
                 )
 
@@ -155,7 +151,7 @@ fun LoginScreen(
                         colorFilter = null as ColorFilter?
                     )
                     Spacer(Modifier.width(s(12)))
-                    Text("Masuk dengan Google", fontSize = (15 * scale).sp)
+                    Text("Masuk dengan Google", style = SajiTextStyles.Body, color = MaterialTheme.colorScheme.onBackground)
                 }
 
                 Spacer(Modifier.height(s(20)))
@@ -179,7 +175,7 @@ fun LoginScreen(
                         modifier = Modifier.size(s(20))
                     )
                     Spacer(Modifier.width(s(12)))
-                    Text("Masuk dengan Email", fontSize = (15 * scale).sp)
+                    Text("Masuk dengan Email", style = SajiTextStyles.Body, color = MaterialTheme.colorScheme.onBackground)
                 }
 
                 Spacer(Modifier.height(s(40)))
@@ -239,7 +235,7 @@ fun LoginScreen(
                         colorFilter = null as ColorFilter?
                     )
                     Spacer(Modifier.width(s(12)))
-                    Text("Daftar dengan Google", fontSize = (15 * scale).sp)
+                    Text("Daftar dengan Google", style = SajiTextStyles.Body, color = MaterialTheme.colorScheme.onBackground)
                 }
 
                 Spacer(Modifier.height(s(14)))
@@ -247,7 +243,7 @@ fun LoginScreen(
                 // Terms section, align center dan tampilan link
                 Text(
                     text = termsText(
-                        highlight = MaterialTheme.colorScheme.primary
+                        highlight = MaterialTheme.colorScheme.inversePrimary
                     ),
                     style = MaterialTheme.typography.labelSmall.copy(
                         fontSize = (10 * scale).sp,

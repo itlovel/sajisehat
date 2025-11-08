@@ -75,7 +75,7 @@ fun AppTopBar(
                 Text(
                     text = titleText,
                     style = SajiTextStyles.BodyLargeSemibold,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.background
                 )
                 subtitleText?.let {
                     Spacer(Modifier.height(2.dp))
