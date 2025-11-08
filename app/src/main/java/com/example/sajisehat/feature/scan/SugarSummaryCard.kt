@@ -36,7 +36,7 @@ fun SugarSummaryCard(
         SugarLevel.RENDAH -> Triple(
             "Rendah",
             Color(0xFFF1C40F),
-            R.drawable.gif_sugar_low    // TODO: ganti sesuai nama resource-mu
+            R.drawable.gif_sugar_low
         )
         SugarLevel.SEDANG -> Triple(
             "Sedang",
