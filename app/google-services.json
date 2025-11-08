@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "550724934641",
+    "project_id": "sajisehat",
+    "storage_bucket": "sajisehat.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550724934641:android:73a1f5dd46c86f561b0250",
+        "android_client_info": {
+          "package_name": "com.example.sajisehat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550724934641-92f1fgv6i1l0v5i8mq9nqbspv4k5tcsq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sajisehat",
+            "certificate_hash": "34d2f5ca735fc68f91f55992d885158efd4f573e"
+          }
+        },
+        {
+          "client_id": "550724934641-lt2m155qp7k9bj0b1tnu06dohtrveprd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sajisehat",
+            "certificate_hash": "93c8a337e6f405bf9069732fa9eda451227c6f3d"
+          }
+        },
+        {
+          "client_id": "550724934641-eshrr62ct7l3i2a503g31f0mpevpt334.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBir6FOrK2uV4FNX0VU6WoehNeEQ93Q3ws"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550724934641-eshrr62ct7l3i2a503g31f0mpevpt334.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
