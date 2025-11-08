@@ -26,18 +26,19 @@ import coil.compose.AsyncImage
 import com.example.sajisehat.feature.topbar.TopBarEvent
 import com.example.sajisehat.feature.topbar.TopBarState
 
-/**
- * Top bar reusable sesuai desain:
- * - Background putih, tanpa garis; padding aman untuk notch.
- * - Kiri: sapaan + subtitle.
- * - Kanan: bell (dengan badge) + avatar bulat.
- */
+
 @Composable
 fun AppTopBar(
     state: TopBarState,
     onEvent: (TopBarEvent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    customTitle: String? = null,
+    customSubtitle: String? = null
 ) {
+    // Resolusi final text, supaya tetap backward-compatible
+    val titleText = customTitle ?: "Hi ${state.greetingName}!"
+    val subtitleText = customSubtitle ?: state.subtitle
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -64,18 +65,20 @@ fun AppTopBar(
                 Spacer(Modifier.width(4.dp))
             }
 
-            // Title area
+            // Title area (tetap sama layout & ukuran)
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = 12.dp)
             ) {
                 Text(
-                    text = "Hi ${state.greetingName}!",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                    text = titleText,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.SemiBold
+                    ),
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                state.subtitle?.let {
+                subtitleText?.let {
                     Spacer(Modifier.height(2.dp))
                     Text(
                         text = it,
@@ -89,7 +92,9 @@ fun AppTopBar(
             BadgedBox(
                 badge = {
                     if (state.unreadCount > 0) {
-                        Badge { Text(state.unreadCount.coerceAtMost(9).toString()) }
+                        Badge {
+                            Text(state.unreadCount.coerceAtMost(9).toString())
+                        }
                     }
                 }
             ) {
@@ -105,14 +110,19 @@ fun AppTopBar(
             Spacer(Modifier.width(8.dp))
 
             IconButton(onClick = { onEvent(TopBarEvent.OnAvatarClick) }) {
-                val border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.25f))
+                val border = BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)
+                )
                 if (state.avatarUrl.isNullOrBlank()) {
                     // placeholder avatar
                     Box(
                         modifier = Modifier
                             .size(32.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+                            .background(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                            )
                             .border(border, CircleShape)
                     )
                 } else {
