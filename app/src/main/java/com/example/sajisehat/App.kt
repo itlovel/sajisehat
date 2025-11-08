@@ -33,7 +33,7 @@ import com.example.sajisehat.feature.catalog.ui.CatalogScreen
 import com.example.sajisehat.feature.detail.ui.DetailScreen
 import com.example.sajisehat.feature.home.ui.HomeScreen
 import com.example.sajisehat.feature.profile.ui.ProfileScreen
-import com.example.sajisehat.feature.scan.ui.ScanScreen
+import com.example.sajisehat.feature.scan.ScanRoute
 import com.example.sajisehat.feature.trek.ui.TrekScreen
 import com.example.sajisehat.navigation.Dest
 import com.example.sajisehat.navigation.isOnRoute
@@ -154,7 +154,7 @@ fun SajisehatApp() {
             // ---------- MAIN ----------
             composable(Dest.Home.route)    { HomeScreen(onOpen = { id -> nav.navigate(Dest.Detail.route(id)) }) }
             composable(Dest.Trek.route)    { TrekScreen() }
-            composable(Dest.Scan.route)    { ScanScreen() }
+            composable(Dest.Scan.route) { ScanRoute(navController = nav) }
             composable(Dest.Catalog.route) { CatalogScreen() }
             composable(Dest.Profile.route) { ProfileScreen() }
             composable(Dest.Detail.route)  { back ->
