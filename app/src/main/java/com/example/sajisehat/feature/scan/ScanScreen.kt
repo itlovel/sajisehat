@@ -28,6 +28,7 @@ fun ScanScreen(
     onToggleExpanded: () -> Unit,
     onPickFromGallery: () -> Unit,
     onBackFromResult: () -> Unit,
+    onSaveToTrek: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (state.step) {
@@ -51,7 +52,8 @@ fun ScanScreen(
             isExpanded = state.isExpandedInfo,
             onToggleExpanded = onToggleExpanded,
             onScanAgain = onScanAgain,
-            onBack = onBackFromResult
+            onBack = onBackFromResult,
+            onSaveToTrek = onSaveToTrek
         )
     }
 }
@@ -174,6 +176,15 @@ fun ScanRoute(
                         popUpTo(Dest.Home.route) { inclusive = false }
                     }
                 },
+
+                onSaveToTrek = {
+                    val sugar = state.lastResult?.sugarPerServingGram ?: 0.0
+
+                    navController.navigate(
+                        Dest.SaveTrek.route(sugar)
+                    )
+                },
+
                 modifier = modifier.padding(padding)
             )
         }

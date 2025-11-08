@@ -1,9 +1,10 @@
 package com.example.sajisehat.feature.trek.save
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -24,17 +25,18 @@ fun SaveToTrekScreen(
         )
     )
 
-    var state by remember { mutableStateOf(viewModel.uiState) }
-
-    // sync perubahan uiState dari ViewModel
-    LaunchedEffect(Unit) {
-        snapshotFlow { viewModel.uiState }.collect { state = it }
-    }
+    // ⬇️ langsung baca state dari ViewModel (sudah observable)
+    val state = viewModel.uiState
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Simpan Produk dalam Trek") }
+                title = { Text("Simpan Produk dalam Trek") },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Kembali")
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -46,7 +48,6 @@ fun SaveToTrekScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            // Info trek gula hari ini
             Text(
                 text = "Trek Gula-mu Saat Ini",
                 style = MaterialTheme.typography.titleMedium
@@ -61,7 +62,7 @@ fun SaveToTrekScreen(
             ) {
                 Column(
                     modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text("Sebelum: ${"%.1f".format(state.totalBefore)} g")
                     Text("Produk ini: ${"%.1f".format(state.sugarGram)} g")
@@ -71,21 +72,21 @@ fun SaveToTrekScreen(
 
             Divider()
 
+            Text("Informasi Produk", style = MaterialTheme.typography.titleMedium)
             Text(
-                text = "Informasi Produk",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "Masukkan nama produk yang baru saja kamu scan:",
+                "Masukkan nama produk yang baru saja kamu scan:",
                 style = MaterialTheme.typography.bodySmall
             )
 
             OutlinedTextField(
-                value = state.productName,
+                value = state.productName,                    // ⬅️ ini value yg bener
                 onValueChange = { viewModel.onProductNameChange(it) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                placeholder = { Text("Contoh: Sereal Coklat 30g") }
+                enabled = !state.isLoading,                   // bisa ketik selama tidak loading
+                placeholder = {
+                    Text("Contoh: Sereal Coklat 30g")         // ⬅️ ini cuma placeholder
+                }
             )
 
             if (state.errorMessage != null) {
@@ -96,16 +97,16 @@ fun SaveToTrekScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(Modifier.weight(1f))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
-                    onClick = onBack
+                    onClick = onBack,
+                    enabled = !state.isLoading
                 ) {
                     Text("Kembali")
                 }

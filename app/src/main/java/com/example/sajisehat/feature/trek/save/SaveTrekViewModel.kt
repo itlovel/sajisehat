@@ -1,5 +1,8 @@
 package com.example.sajisehat.feature.trek.save
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sajisehat.data.auth.AuthRepository
@@ -12,10 +15,13 @@ import java.time.format.DateTimeFormatter
 class SaveTrekViewModel(
     private val trekRepository: TrekRepository,
     private val authRepository: AuthRepository,
-    private val initialSugarGram: Double
+    initialSugarGram: Double
 ) : ViewModel() {
 
-    var uiState: SaveTrekUiState = SaveTrekUiState(sugarGram = initialSugarGram)
+    // ⬇️ ini penting: mutableStateOf biar Compose recompose
+    var uiState by mutableStateOf(
+        SaveTrekUiState(sugarGram = initialSugarGram)
+    )
         private set
 
     private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -79,17 +85,15 @@ class SaveTrekViewModel(
 
                 trekRepository.addTrackedProduct(entry)
 
-                uiState = uiState.copy(
-                    isLoading = false,
-                    isSaved = true
-                )
+                uiState = uiState.copy(isLoading = false)
                 onSuccess()
             } catch (e: Exception) {
+                val msg = e.message ?: "Gagal menyimpan trek gula"
                 uiState = uiState.copy(
                     isLoading = false,
-                    errorMessage = e.message ?: "Gagal menyimpan trek gula"
+                    errorMessage = msg
                 )
-                onError(uiState.errorMessage!!)
+                onError(msg)
             }
         }
     }

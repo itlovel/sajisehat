@@ -14,11 +14,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.sajisehat.feature.auth.login.LoginEmailScreen
 import com.example.sajisehat.feature.auth.login.LoginScreen
 import com.example.sajisehat.feature.auth.onboarding.OnboardingScreen
@@ -34,6 +36,7 @@ import com.example.sajisehat.feature.detail.ui.DetailScreen
 import com.example.sajisehat.feature.home.ui.HomeScreen
 import com.example.sajisehat.feature.profile.ui.ProfileScreen
 import com.example.sajisehat.feature.scan.ScanRoute
+import com.example.sajisehat.feature.trek.save.SaveToTrekScreen
 import com.example.sajisehat.feature.trek.ui.TrekScreen
 import com.example.sajisehat.navigation.Dest
 import com.example.sajisehat.navigation.isOnRoute
@@ -155,6 +158,27 @@ fun SajisehatApp() {
             composable(Dest.Home.route)    { HomeScreen(onOpen = { id -> nav.navigate(Dest.Detail.route(id)) }) }
             composable(Dest.Trek.route)    { TrekScreen() }
             composable(Dest.Scan.route) { ScanRoute(navController = nav) }
+
+            // Save Scan
+            composable(
+                route = Dest.SaveTrek.route,
+                arguments = listOf(
+                    navArgument("sugar") { type = NavType.FloatType }
+                )
+            ) { backStackEntry ->
+                val sugar = backStackEntry.arguments?.getFloat("sugar")?.toDouble() ?: 0.0
+
+                SaveToTrekScreen(
+                    sugarGram = sugar,
+                    onBack = { nav.popBackStack() },
+                    onSaved = {
+                        nav.navigate(Dest.Trek.route) {
+                            popUpTo(Dest.Home.route) { inclusive = false }
+                        }
+                    }
+                )
+            }
+
             composable(Dest.Catalog.route) { CatalogScreen() }
             composable(Dest.Profile.route) { ProfileScreen() }
             composable(Dest.Detail.route)  { back ->

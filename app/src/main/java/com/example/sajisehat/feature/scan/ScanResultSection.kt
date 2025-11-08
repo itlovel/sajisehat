@@ -35,6 +35,7 @@ fun ScanResultSection(
     onToggleExpanded: () -> Unit,
     onScanAgain: () -> Unit,
     onBack: () -> Unit,
+    onSaveToTrek: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (result == null) {
@@ -234,7 +235,7 @@ fun ScanResultSection(
                 }
 
                 Button(
-                    onClick = { /* TODO: navigate ke layar simpan trek + input nama produk */ },
+                    onClick = onSaveToTrek,
                     modifier = Modifier
                         .weight(1f)
                         .height(48.dp)
@@ -244,6 +245,7 @@ fun ScanResultSection(
                         style = MaterialTheme.typography.labelLarge
                     )
                 }
+
             }
         }
     }
