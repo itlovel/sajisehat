@@ -42,6 +42,7 @@ android {
 
 dependencies {
 
+    implementation ("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
