@@ -152,10 +152,28 @@ fun SajisehatApp() {
             }
 
             // ---------- MAIN ----------
-            composable(Dest.Home.route)    { HomeScreen(onOpen = { id -> nav.navigate(Dest.Detail.route(id)) }) }
+            composable(Dest.Home.route) {
+                HomeScreen(
+                    onOpen = { id ->
+                        nav.navigate(Dest.Detail.route(id))
+                    },
+                    onOpenProfile = {
+                        nav.navigateSingleTopTo(Dest.Profile.route)
+                    }
+                )
+            }
             composable(Dest.Trek.route)    { TrekScreen() }
             composable(Dest.Scan.route)    { ScanScreen() }
-            composable(Dest.Catalog.route) { CatalogScreen() }
+            composable(Dest.Catalog.route) {
+                CatalogScreen(
+                    onOpenProductDetail = { id ->
+                        nav.navigate(Dest.Detail.route(id))
+                    },
+                    onOpenProfile = {
+                        nav.navigateSingleTopTo(Dest.Profile.route)
+                    }
+                )
+            }
             composable(Dest.Profile.route) {
                 ProfileScreen(
                     onGoSettingsMarkah = { /* nav.navigate("markah") */ },
