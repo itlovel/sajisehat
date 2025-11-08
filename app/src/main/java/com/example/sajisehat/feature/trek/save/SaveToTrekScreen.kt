@@ -1,18 +1,22 @@
 package com.example.sajisehat.feature.trek.save
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sajisehat.R
@@ -25,17 +29,27 @@ private fun DailySugarSummaryCard(
     modifier: Modifier = Modifier
 ) {
     val level = getSugarLevelUi(totalSugarAfter)
-    val dailyPercent = calculateDailyPercent(totalSugarAfter).coerceAtMost(200) // biar ga kepanjangan
     val limitGram = 50
 
-    androidx.compose.material3.Card(
+    val cardStrokeColor = Color(0xFFDDDDDD)          // abu tua tipis
+    val cardGradient = Brush.verticalGradient(
+        colors = listOf(
+            Color(0xFFFDFDFE),                      // hampir putih
+            Color(0xFFF3F4F7)                       // abu muda ke bawah
+        )
+    )
+
+    Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(20.dp)
+        shape = RoundedCornerShape(20.dp),
+        tonalElevation = 2.dp,                      // efek 3D tipis
+        shadowElevation = 3.dp,                     // bayangan halus
+        border = BorderStroke(1.dp, cardStrokeColor)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFF5F6FF)) // background card
+                .background(cardGradient)
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -43,14 +57,13 @@ private fun DailySugarSummaryCard(
             Image(
                 painter = painterResource(
                     when (level) {
-                        SugarLevelUi.LOW -> R.drawable.ic_sugar_low    // ganti dengan assetmu
+                        SugarLevelUi.LOW -> R.drawable.ic_sugar_low
                         SugarLevelUi.MEDIUM -> R.drawable.ic_sugar_medium
                         SugarLevelUi.HIGH -> R.drawable.ic_sugar_high
                     }
                 ),
                 contentDescription = null,
-                modifier = Modifier
-                    .size(72.dp)
+                modifier = Modifier.size(72.dp)
             )
 
             Spacer(Modifier.width(16.dp))
@@ -59,221 +72,325 @@ private fun DailySugarSummaryCard(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
+                // "Konsumsi Gula: Rendah"
                 Text(
-                    text = "Konsumsi Gula: ${level.titleText()}",
+                    text = buildAnnotatedString {
+                        append("Konsumsi Gula: ")
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF002A7A)
+                            )
+                        ) {
+                            append(level.titleText())
+                        }
+                    },
                     style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = Color(0xFF001C54)
-                )
-
-                Text(
-                    text = "Hari ini, kamu telah mengonsumsi ${"%.0f".format(totalSugarAfter)} gram gula",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF222222)
                     )
                 )
 
+                // "Hari ini, kamu telah mengonsumsi 11 gram gula"
+                Text(
+                    text = buildAnnotatedString {
+                        append("Hari ini, kamu telah mengonsumsi ")
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF002A7A)
+                            )
+                        ) {
+                            append("${"%.0f".format(totalSugarAfter)} gram")
+                        }
+                        append(" gula")
+                    },
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Medium,
+                        color = Color(0xFF222222)
+                    )
+                )
+
+                // Deskripsi WHO, abu dan lebih kecil
                 Text(
                     text = "Tahukah kamu? WHO menyarankan bahwa standar gula harian manusia adalah tidak lebih dari $limitGram gram",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF777777)
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = Color(0xFF9E9E9E)
+                    )
                 )
             }
         }
     }
 }
-
 @Composable
 private fun DailySugarProgressBar(
-    totalSugarAfter: Double,
+    totalBefore: Double,
+    addedSugar: Double,
+    totalAfter: Double,
     modifier: Modifier = Modifier
 ) {
-    val dailyPercent = calculateDailyPercent(totalSugarAfter)
-    val clampedPercent = dailyPercent.coerceIn(0, 200) // biar ga kelewatan
-    val limitGram = 50
+    val limitGram = 50.0
+
+    val dailyPercent = calculateDailyPercent(totalAfter)
+    val clampedPercent = dailyPercent.coerceIn(0, 200)
+
+    // fraksi 0..1
+    val beforeFraction = (totalBefore / limitGram).coerceIn(0.0, 1.0)
+    val afterFraction = (totalAfter / limitGram).coerceIn(0.0, 1.0)
+    val addedFraction = (afterFraction - beforeFraction)
+        .coerceIn(0.0, 1.0 - beforeFraction)
+
+    val cardStrokeColor = Color(0xFFDDDDDD)
+    val cardBg = Brush.verticalGradient(
+        listOf(
+            Color(0xFFFFFFFF),
+            Color(0xFFF5F5F8)
+        )
+    )
 
     Surface(
-        shape = RoundedCornerShape(16.dp),
-        color = Color(0xFFF9F9FB),
-        modifier = modifier
+        modifier = modifier,
+        shape = RoundedCornerShape(14.dp),
+        shadowElevation = 2.dp,
+        tonalElevation = 1.dp,
+        border = BorderStroke(1.dp, cardStrokeColor)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .background(cardBg)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // ===== TEKS ATAS (pakai buildAnnotatedString) =====
             Text(
-                text = "Konsumsi gula-mu saat ini setara dengan $clampedPercent% dari kebutuhan gula-mu di hari ini",
-                style = MaterialTheme.typography.bodySmall
+                text = buildAnnotatedString {
+                    append("Konsumsi gula-mu saat ini setara dengan ")
+                    withStyle(
+                        style = SpanStyle(
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF002A7A)
+                        )
+                    ) {
+                        append("$clampedPercent%")
+                    }
+                    append(" dari kebutuhan gula-mu di hari ini")
+                },
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Color(0xFF444444)
+                )
             )
 
-            Spacer(Modifier.height(4.dp))
-
-            // fake progressbar
+            // ===== PROGRESS BAR 3 SEGMENT (biru + kuning + abu) =====
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(10.dp)
                     .background(Color(0xFFE0E0E0), RoundedCornerShape(50))
             ) {
-                Box(
+                Row(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(
-                            (clampedPercent / 100f).coerceAtMost(1f)
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(50.dp))
+                ) {
+                    // Biru: konsumsi sebelum
+                    if (beforeFraction > 0.0) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(beforeFraction.toFloat())
+                                .background(Color(0xFF002A7A))
                         )
-                        .background(Color(0xFFFFC107), RoundedCornerShape(50))
-                )
+                    }
+
+                    // Kuning: tambahan produk ini
+                    if (addedFraction > 0.0) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(addedFraction.toFloat())
+                                .background(Color(0xFFFFC107))
+                        )
+                    }
+
+                    // Sisa: transparan (abu dari background)
+                    val remaining = 1f - (beforeFraction + addedFraction).toFloat()
+                    if (remaining > 0f) {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(remaining)
+                        )
+                    }
+                }
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("0 Gr", style = MaterialTheme.typography.labelSmall)
-                Text("$limitGram Gr", style = MaterialTheme.typography.labelSmall)
+                Text(
+                    "0 Gr",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = Color(0xFF777777)
+                    )
+                )
+                Text(
+                    "${limitGram.toInt()} Gr",
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        color = Color(0xFF777777)
+                    )
+                )
             }
         }
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SaveToTrekScreen(
-    sugarGram: Double,
-    onBack: () -> Unit,
-    onSaved: () -> Unit
-) {
-    val viewModel: SaveTrekViewModel = viewModel(
-        factory = SaveTrekViewModelFactory(
-            trekRepository = AppGraph.trekRepository,
-            authRepository = AppGraph.authRepo,
-            sugarGram = sugarGram
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun SaveToTrekScreen(
+        sugarGram: Double,
+        onBack: () -> Unit,
+        onSaved: () -> Unit
+    ) {
+        val viewModel: SaveTrekViewModel = viewModel(
+            factory = SaveTrekViewModelFactory(
+                trekRepository = AppGraph.trekRepository,
+                authRepository = AppGraph.authRepo,
+                sugarGram = sugarGram
+            )
         )
-    )
-    val state = viewModel.uiState
+        val state = viewModel.uiState
 
-    Scaffold(
-        topBar = {
-            TopBarChild(
-                title = "Simpan Produk dalam Trek",
-                onBack = onBack
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-
-            // ====== Teks judul section ======
-            Text(
-                text = "Trek Gula-mu Saat Ini",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF001C54)
+        Scaffold(
+            topBar = {
+                TopBarChild(
+                    title = "Simpan Produk dalam Trek",
+                    onBack = onBack
                 )
-            )
-            Text(
-                text = "Kalkulasi jumlah trek gula, jika kamu mengonsumsi produk yang ditambahkan",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF777777)
-            )
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
 
-            // ====== Kartu utama ala Figma ======
-            DailySugarSummaryCard(
-                totalSugarAfter = state.totalAfter,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            // ====== progress bar ala Figma ======
-            DailySugarProgressBar(
-                totalSugarAfter = state.totalAfter,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Divider(Modifier.padding(top = 4.dp))
-
-            // ====== Informasi Produk ======
-            Text(
-                text = "Informasi Produk",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold
-                )
-            )
-            Text(
-                text = "Beri tahu kami nama produk yang baru Anda Scan:",
-                style = MaterialTheme.typography.bodySmall
-            )
-
-            OutlinedTextField(
-                value = state.productName,
-                onValueChange = { viewModel.onProductNameChange(it) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                enabled = !state.isLoading,
-                placeholder = {
-                    Text("Contoh: Sereal Coklat 30g")
-                }
-            )
-
-            if (state.errorMessage != null) {
+                // Judul section
                 Text(
-                    text = state.errorMessage ?: "",
-                    color = MaterialTheme.colorScheme.error,
+                    text = "Trek Gula-mu Saat Ini",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF001C54)
+                    )
+                )
+                Text(
+                    text = "Kalkulasi jumlah trek gula, jika kamu mengonsumsi produk yang ditambahkan",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = Color(0xFF777777)
+                    )
+                )
+
+                // Card konsumsi + progress bar
+                DailySugarSummaryCard(
+                    totalSugarAfter = state.totalAfter,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                DailySugarProgressBar(
+                    totalBefore = state.totalBefore,
+                    addedSugar = state.sugarGram,
+                    totalAfter = state.totalAfter,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Divider(Modifier.padding(top = 4.dp))
+
+                // Informasi produk
+                Text(
+                    text = "Informasi Produk",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Text(
+                    text = "Beri tahu kami nama produk yang baru Anda Scan:",
                     style = MaterialTheme.typography.bodySmall
                 )
-            }
 
-            Spacer(Modifier.weight(1f))
-
-            // ====== Tombol bawah (Kembali & Simpan) ======
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                OutlinedButton(
-                    onClick = onBack,
+                OutlinedTextField(
+                    value = state.productName,
+                    onValueChange = { viewModel.onProductNameChange(it) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
                     enabled = !state.isLoading,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    shape = RoundedCornerShape(30.dp)
-                ) {
-                    Text("Kembali")
+                    placeholder = {
+                        Text(
+                            "Contoh: Sereal Coklat 30g",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = Color(0xFFB0B0B0)
+                            )
+                        )
+                    }
+                )
+
+                if (state.errorMessage != null) {
+                    Text(
+                        text = state.errorMessage ?: "",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
 
-                Button(
-                    onClick = {
-                        viewModel.save(
-                            onSuccess = onSaved,
-                            onError = { /* TODO snackbar */ }
-                        )
-                    },
-                    enabled = !state.isLoading && state.productName.isNotBlank(),
+                Spacer(Modifier.weight(1f))
+
+                // Tombol bawah
+                Row(
                     modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp),
-                    shape = RoundedCornerShape(30.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF002A7A),
-                        disabledContainerColor = Color(0xFFB0B8D0)
-                    )
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text(
-                        text = if (state.isLoading) "Menyimpan..." else "Simpan",
-                        color = Color.White
-                    )
+                    OutlinedButton(
+                        onClick = onBack,
+                        enabled = !state.isLoading,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(30.dp)
+                    ) {
+                        Text(
+                            "Kembali",
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            viewModel.save(
+                                onSuccess = onSaved,
+                                onError = { /* TODO snackbar */ }
+                            )
+                        },
+                        enabled = !state.isLoading && state.productName.isNotBlank(),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp),
+                        shape = RoundedCornerShape(30.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF002A7A),
+                            disabledContainerColor = Color(0xFFB0B8D0)
+                        )
+                    ) {
+                        Text(
+                            text = if (state.isLoading) "Menyimpan..." else "Simpan",
+                            color = Color.White,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
                 }
             }
         }
     }
-}
