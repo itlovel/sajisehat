@@ -1,7 +1,7 @@
 package com.example.sajisehat.feature.scan
 
-import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.ImageDecoder
+import android.graphics.drawable.AnimatedImageDrawable
 import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
@@ -20,8 +20,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.sajisehat.R
 
@@ -64,7 +67,7 @@ fun SugarSummaryCard(
                         )
                     )
                 )
-                .padding(20.dp)
+                .padding(horizontal = 20.dp, vertical = 18.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -72,36 +75,85 @@ fun SugarSummaryCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // Emoji / GIF di kiri
-                SugarGif(resId = emojiRes, modifier = Modifier.size(64.dp))
+                SugarGif(
+                    resId = emojiRes,
+                    modifier = Modifier.size(64.dp)
+                )
 
                 // Teks di kanan
                 Column(
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                     modifier = Modifier.weight(1f)
                 ) {
+                    // Judul: "Kandungan Gula: " putih, level berwarna & bold
                     Text(
-                        text = "Kandungan Gula: $levelText",
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        )
+                        text = buildAnnotatedString {
+                            withStyle(
+                                SpanStyle(
+                                    color = Color.White,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            ) {
+                                append("Kandungan Gula: ")
+                            }
+                            withStyle(
+                                SpanStyle(
+                                    color = accentColor,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append(levelText)
+                            }
+                        },
+                        style = MaterialTheme.typography.titleMedium
                     )
 
+                    // Kalimat 2: highlight jumlah gula
                     Text(
-                        text = "Produk mengandung %.1f Gram gula per 1 takaran saji-nya"
-                            .format(sugarPerServing),
-                        color = Color.White,
-                        style = MaterialTheme.typography.bodyMedium
+                        text = buildAnnotatedString {
+                            withStyle(SpanStyle(color = Color.White)) {
+                                append("Produk mengandung ")
+                            }
+                            withStyle(
+                                SpanStyle(
+                                    color = accentColor,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            ) {
+                                append("%.1f Gram".format(sugarPerServing))
+                            }
+                            withStyle(SpanStyle(color = Color.White)) {
+                                append(" gula per 1 takaran saji-nya")
+                            }
+                        },
+                        style = MaterialTheme.typography.bodySmall
                     )
 
+                    // Kalimat 3: highlight persen harian
                     Text(
-                        text = "%d%% dari kebutuhan gulamu per hari"
-                            .format(dailyPercent),
-                        color = accentColor,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        text = buildAnnotatedString {
+                            // 16% → tetap besar & tebal
+                            withStyle(
+                                SpanStyle(
+                                    color = accentColor,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            ) {
+                                append("%d%%".format(dailyPercent))
+                            }
+                            // " dari kebutuhan gulamu per hari" → lebih kecil
+                            withStyle(
+                                SpanStyle(
+                                    color = Color.White,
+                                    fontSize = MaterialTheme.typography.bodySmall.fontSize
+                                )
+                            ) {
+                                append(" dari kebutuhan gulamu per hari")
+                            }
+                        },
+                        style = MaterialTheme.typography.bodySmall
                     )
+
                 }
             }
         }
@@ -116,22 +168,20 @@ private fun SugarGif(
     val context = LocalContext.current
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        // decode sekali dan di-remember
         val drawable = remember(resId) {
             val source = ImageDecoder.createSource(context.resources, resId)
-            ImageDecoder.decodeDrawable(source)   // biasanya AnimatedImageDrawable
+            ImageDecoder.decodeDrawable(source)
         }
 
         AndroidView(
             modifier = modifier,
             factory = { ctx ->
-                // di sini kita jelas pakai ImageView
                 ImageView(ctx).apply {
                     setImageDrawable(drawable)
                     (drawable as? AnimatedImageDrawable)?.start()
                 }
             },
-            update = { imageView: ImageView ->
+            update = { imageView ->
                 imageView.setImageDrawable(drawable)
                 (drawable as? AnimatedImageDrawable)?.start()
             }
@@ -145,4 +195,3 @@ private fun SugarGif(
         )
     }
 }
-
