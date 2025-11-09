@@ -1,19 +1,26 @@
 package com.example.sajisehat.feature.trek.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.sajisehat.feature.scan.SugarSummaryCard
+import com.example.sajisehat.feature.scan.SugarLevel
 import com.example.sajisehat.feature.trek.model.ManualResultUi
 import com.example.sajisehat.feature.trek.model.SugarLevelUi
 import com.example.sajisehat.feature.topbar.TopBarChild
-import androidx.compose.ui.graphics.Color
 
 @Composable
 fun ManualCalcScreen(
@@ -21,6 +28,16 @@ fun ManualCalcScreen(
     onBack: () -> Unit,
     onAddToTrek: () -> Unit
 ) {
+    val darkBlue = Color(0xFF001A72)
+
+    // mapping SugarLevelUi -> SugarLevel (punyanya modul scan)
+    val scanLevel = when (result.level) {
+        SugarLevelUi.LOW -> SugarLevel.RENDAH
+        SugarLevelUi.MEDIUM -> SugarLevel.SEDANG
+        SugarLevelUi.HIGH -> SugarLevel.TINGGI
+        SugarLevelUi.UNKNOWN -> SugarLevel.SEDANG
+    }
+
     Scaffold(
         topBar = {
             TopBarChild(
@@ -33,116 +50,162 @@ fun ManualCalcScreen(
             modifier = Modifier
                 .padding(inner)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(Modifier.height(8.dp))
 
+            // ========= JUDUL (sama gaya dengan ScanResultSection) =========
             Text(
                 text = "Hasil Kalkulasi Produk:",
-                style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 8.dp, bottom = 4.dp)
+                    .fillMaxWidth()
             )
 
-            Spacer(Modifier.height(16.dp))
+            // ========= KARTU UTAMA: SugarSummaryCard =========
+            SugarSummaryCard(
+                level = scanLevel,
+                sugarPerServing = result.sugarPerServingGram,
+                dailyPercent = result.percentOfDailyNeed,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-            // Card biru seperti desain
-            OutlinedCard(
+            // ========= KALKULASI PER 1x TAKARAN SAJI (mirip ScanResultSection) =========
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = Color(0xFFF9F9FB),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(
-                        text = "Kandungan Gula: ${result.level.toDisplayText()}",
-                        style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        text = "Kalkulasi per 1x Takaran Saji",
+                        style = MaterialTheme.typography.titleSmall.copy(
+                            fontWeight = FontWeight.Bold
+                        )
                     )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = "Produk mengandung ${result.sugarPerServingGram.toInt()} gram gula per 1 takaran saji-nya",
-                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
+
+                    result.servingSizeGram?.let {
+                        InfoRowManual(
+                            label = "Takaran per 1x saji:",
+                            value = "${it.toInt()} Gram"
+                        )
+                    }
+
+                    InfoRowManual(
+                        label = "Kandungan gula per 1x saji:",
+                        value = "${result.sugarPerServingGram.toInt()} Gram"
                     )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = "${result.percentOfDailyNeed}% dari kebutuhan gulamu per hari",
-                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFFEE8A00)
+
+                    InfoRowManual(
+                        label = "% terhadap kebutuhan gula/hari:",
+                        value = "${result.percentOfDailyNeed} %"
                     )
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
+            // ========= TEXT KECIL DI ATAS BUTTON =========
             Text(
-                text = "Kalkulasi per 1x Takaran Saji",
-                style = androidx.compose.material3.MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold
+                text = "Ingin tambahkan produk ke track gula kamu hari ini?",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF555555)
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
             )
 
-            Spacer(Modifier.height(8.dp))
-
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                result.servingSizeGram?.let {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("Takaran per 1x saji:")
-                        Text("${it.toInt()} Gram")
-                    }
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("Kandungan gula per 1x saji:")
-                    Text("${result.sugarPerServingGram.toInt()} Gram")
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("% terhadap kebutuhan gula/hari:")
-                    Text("${result.percentOfDailyNeed} %")
-                }
-            }
-
-            Spacer(Modifier.weight(1f))
-
+            // ========= BUTTON BAWAH: Kembali & Tambah =========
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(
+                OutlinedButton(
                     onClick = onBack,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = darkBlue
+                    ),
+                    shape = RoundedCornerShape(24.dp),
+                    border = ButtonDefaults.outlinedButtonBorder.copy(
+                        width = 1.dp,
+                        brush = androidx.compose.ui.graphics.SolidColor(darkBlue)
+                    )
                 ) {
-                    Text("Kembali")
+                    Text(
+                        text = "Kembali",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
 
                 Button(
                     onClick = onAddToTrek,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = darkBlue,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(24.dp)
                 ) {
-                    Text("Tambah")
+                    Text(
+                        text = "Tambah",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
-
-            Spacer(Modifier.height(16.dp))
         }
+    }
+}
+
+// ========== ROW INFO KECIL (copy gaya InfoRow di ScanResultSection) ==========
+@Composable
+private fun InfoRowManual(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = Color(0xFF555555)
+            )
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontWeight = FontWeight.SemiBold
+            ),
+            textAlign = TextAlign.End
+        )
     }
 }
 
 private fun SugarLevelUi.toDisplayText(): String = when (this) {
     SugarLevelUi.LOW -> "Rendah"
     SugarLevelUi.MEDIUM -> "Sedang"
-    SugarLevelUi.HIGH -> "Sedang" // atau "Tinggi" kalau desainmu pakai itu
+    SugarLevelUi.HIGH -> "Tinggi"
     SugarLevelUi.UNKNOWN -> "-"
 }
