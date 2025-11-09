@@ -298,6 +298,10 @@ fun SajisehatApp() {
                         if (result != null) {
                             nav.navigate(Dest.TrekManualCalc.route(dateString))
                         }
+                    },
+                    onOpenCatalog = {
+                        // arahkan ke fitur katalog
+                        nav.navigate(Dest.Catalog.route)
                     }
                 )
             }
