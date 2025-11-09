@@ -1,5 +1,7 @@
 package com.example.sajisehat.navigation
 
+import android.net.Uri
+
 sealed class Dest(val route: String) {
     // Auth
     data object Splash : Dest("splash")
@@ -27,8 +29,14 @@ sealed class Dest(val route: String) {
     object TrekDetail : Dest("trekDetail/{date}") {
         fun route(date: String): String = "trekDetail/$date"
     }
-    data object SaveTrek : Dest("save_trek/{sugar}") {
-        fun route(sugar: Double): String = "save_trek/$sugar"
+    data object SaveTrek : Dest("save_trek/{sugar}?name={name}") {
+        fun route(sugar: Double, name: String? = null): String {
+            return if (name != null) {
+                "save_trek/$sugar?name=${Uri.encode(name)}"
+            } else {
+                "save_trek/$sugar"
+            }
+        }
     }
     data object SaveTrekSuccess : Dest("save_trek_success")
     object TrekManualInput : Dest("trekManualInput/{date}") {

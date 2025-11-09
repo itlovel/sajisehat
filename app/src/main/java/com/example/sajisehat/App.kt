@@ -209,23 +209,32 @@ fun SajisehatApp() {
             composable(
                 route = Dest.SaveTrek.route,
                 arguments = listOf(
-                    navArgument("sugar") { type = NavType.FloatType }
+                    navArgument("sugar") { type = NavType.FloatType },
+                    navArgument("name") {
+                        type = NavType.StringType
+                        defaultValue = ""      // boleh kosong
+                        nullable = true
+                    }
                 )
             ) { backStackEntry ->
                 val sugar = backStackEntry.arguments?.getFloat("sugar")?.toDouble() ?: 0.0
+
+                val nameArg = backStackEntry.arguments?.getString("name")
+                val initialName = nameArg?.takeIf { it.isNotBlank() }
 
                 SaveToTrekScreen(
                     sugarGram = sugar,
                     onBack = { nav.popBackStack() },
                     onSaved = {
                         nav.navigate(Dest.SaveTrekSuccess.route) {
-                            // hapus halaman form dari backstack, biar kalau back
-                            // nggak balik ke form yang sama
                             popUpTo(Dest.SaveTrek.route) { inclusive = true }
                         }
-                    }
+                    },
+                    initialProductName = initialName,
+                    lockProductName = !initialName.isNullOrBlank() // kalau ada nama → field dikunci
                 )
             }
+
             composable(Dest.SaveTrekSuccess.route) {
                 SaveTrekSuccessScreen(
                     onGoToTrek = {
@@ -339,18 +348,15 @@ fun SajisehatApp() {
                     result = result,
                     onBack = { nav.popBackStack() },
                     onAddToTrek = {
-                        manualViewModel.saveToTrek(
-                            onSuccess = {
-                                nav.navigate(Dest.SaveTrekSuccess.route) {
-                                    popUpTo(Dest.Trek.route) { inclusive = false }
-                                }
-                            },
-                            onError = {
-                                println("Error save manual trek: $it")
-                            }
-                        )
+                        val sugar = result.sugarPerServingGram
+                        val name  = result.productName   // ambil nama dari hasil manual
+
+                        nav.navigate(Dest.SaveTrek.route(sugar, name))
                     }
                 )
+
+
+
             }
 
 

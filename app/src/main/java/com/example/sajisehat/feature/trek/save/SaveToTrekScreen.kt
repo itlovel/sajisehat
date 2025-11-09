@@ -254,7 +254,9 @@ private fun DailySugarProgressBar(
 fun SaveToTrekScreen(
     sugarGram: Double,
     onBack: () -> Unit,
-    onSaved: () -> Unit
+    onSaved: () -> Unit,
+    initialProductName: String? = null,   // NEW: prefill dari manual
+    lockProductName: Boolean = false      // NEW: field tidak bisa diubah kalau manual
 ) {
     val viewModel: SaveTrekViewModel = viewModel(
         factory = SaveTrekViewModelFactory(
@@ -265,9 +267,17 @@ fun SaveToTrekScreen(
     )
     val state = viewModel.uiState
 
-    // --- SNACKBAR STATE & SCOPE ---
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+
+    val darkBlue = Color(0xFF001A72)
+
+    // PREFILL nama produk hanya sekali, kalau datang dari manual
+    androidx.compose.runtime.LaunchedEffect(initialProductName) {
+        if (initialProductName != null && state.productName.isBlank()) {
+            viewModel.onProductNameChange(initialProductName)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -288,12 +298,12 @@ fun SaveToTrekScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            // ====== Teks judul section ======
+            // ====== SECTION JUDUL ======
             Text(
                 text = "Trek Gula-mu Saat Ini",
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF001C54)
+                    color = darkBlue
                 )
             )
             Text(
@@ -303,13 +313,13 @@ fun SaveToTrekScreen(
                 )
             )
 
-            // ====== Kartu utama ala Figma ======
+            // ====== CARD RINGKASAN (HATI BIRU) ======
             DailySugarSummaryCard(
                 totalSugarAfter = state.totalAfter,
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // ====== progress bar ala Figma ======
+            // ====== PROGRESS BAR ======
             DailySugarProgressBar(
                 totalBefore = state.totalBefore,
                 addedSugar = state.sugarGram,
@@ -317,9 +327,7 @@ fun SaveToTrekScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Divider(Modifier.padding(top = 4.dp))
-
-            // ====== Informasi Produk ======
+            // ====== INFORMASI PRODUK ======
             Text(
                 text = "Informasi Produk",
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -327,16 +335,20 @@ fun SaveToTrekScreen(
                 )
             )
             Text(
-                text = "Beri tahu kami nama produk yang baru Anda Scan:",
+                text = "Nama Produk Yang Ditambahkan",
                 style = MaterialTheme.typography.bodySmall
             )
 
             OutlinedTextField(
                 value = state.productName,
-                onValueChange = { viewModel.onProductNameChange(it) },
+                onValueChange = { newText ->
+                    if (!lockProductName) {    // dari scan: bisa edit, dari manual: terkunci
+                        viewModel.onProductNameChange(newText)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                enabled = !state.isLoading,
+                enabled = !lockProductName && !state.isLoading,
                 placeholder = {
                     Text(
                         "Contoh: Sereal Coklat 30g",
@@ -357,7 +369,7 @@ fun SaveToTrekScreen(
 
             Spacer(Modifier.weight(1f))
 
-            // ====== Tombol bawah (Kembali & Simpan) ======
+            // ====== BUTTON BAWAH ======
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -384,9 +396,7 @@ fun SaveToTrekScreen(
                             onSuccess = onSaved,
                             onError = { message ->
                                 coroutineScope.launch {
-                                    snackbarHostState.showSnackbar(
-                                        message = message
-                                    )
+                                    snackbarHostState.showSnackbar(message)
                                 }
                             }
                         )
@@ -397,8 +407,9 @@ fun SaveToTrekScreen(
                         .height(40.dp),
                     shape = RoundedCornerShape(30.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF002A7A),
-                        disabledContainerColor = Color(0xFFB0B8D0)
+                        containerColor = darkBlue,
+                        disabledContainerColor = Color(0xFFB0B8D0),
+                        disabledContentColor = Color.White
                     )
                 ) {
                     Text(
@@ -411,4 +422,3 @@ fun SaveToTrekScreen(
         }
     }
 }
-
