@@ -1,4 +1,3 @@
-// feature/profile/ProfileViewModel.kt
 package com.example.sajisehat.feature.profile.ui
 
 import androidx.lifecycle.ViewModel

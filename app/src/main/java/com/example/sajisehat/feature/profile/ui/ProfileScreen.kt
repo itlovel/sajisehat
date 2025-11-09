@@ -1,4 +1,3 @@
-// feature/profile/ui/ProfileScreen.kt
 package com.example.sajisehat.feature.profile.ui
 
 import androidx.compose.foundation.Image

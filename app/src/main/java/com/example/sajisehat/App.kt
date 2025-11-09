@@ -33,6 +33,7 @@ import com.example.sajisehat.feature.catalog.ui.CatalogScreen
 import com.example.sajisehat.feature.detail.ui.DetailScreen
 import com.example.sajisehat.feature.home.ui.HomeScreen
 import com.example.sajisehat.feature.profile.ui.ProfileScreen
+import com.example.sajisehat.feature.profile.ui.markah.ProfileMarkahScreen
 import com.example.sajisehat.feature.scan.ui.ScanScreen
 import com.example.sajisehat.feature.trek.ui.TrekScreen
 import com.example.sajisehat.navigation.Dest
@@ -69,7 +70,13 @@ fun SajisehatApp() {
         )
     )
 
-    val barRoutes = setOf(Dest.Home.route, Dest.Trek.route, Dest.Scan.route, Dest.Catalog.route, Dest.Profile.route)
+    val barRoutes = setOf(
+        Dest.Home.route,
+        Dest.Trek.route,
+        Dest.Scan.route,
+        Dest.Catalog.route,
+        Dest.Profile.route,
+        Dest.Markah.route)
     val backStackEntry by nav.currentBackStackEntryAsState()
     val currentDest = backStackEntry?.destination
     val showBar = currentDest?.hierarchy?.any { it.route in barRoutes } == true
@@ -176,12 +183,21 @@ fun SajisehatApp() {
             }
             composable(Dest.Profile.route) {
                 ProfileScreen(
-                    onGoSettingsMarkah = { /* nav.navigate("markah") */ },
+                    onGoSettingsMarkah = { nav.navigate(Dest.Markah.route) },
                     onGoNotificationSettings = { /* nav.navigate("notifSettings") */ },
                     onLoggedOut = {
                         nav.navigate(Dest.Login.route) {
                             popUpTo(0) { inclusive = true }
                         }
+                    }
+                )
+            }
+
+            composable(Dest.Markah.route) {
+                ProfileMarkahScreen(
+                    onBack = { nav.popBackStack() },
+                    onOpenProductDetail = { id ->
+                        nav.navigate(Dest.Detail.route(id))
                     }
                 )
             }
