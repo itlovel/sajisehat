@@ -41,8 +41,11 @@ import com.example.sajisehat.feature.detail.ui.DetailScreen
 import com.example.sajisehat.feature.home.ui.HomeScreen
 import com.example.sajisehat.feature.profile.ui.ProfileScreen
 import com.example.sajisehat.feature.scan.ScanRoute
+import com.example.sajisehat.feature.trek.TrekDetailViewModel
+import com.example.sajisehat.feature.trek.TrekDetailViewModelFactory
 import com.example.sajisehat.feature.trek.save.SaveToTrekScreen
 import com.example.sajisehat.feature.trek.save.SaveTrekSuccessScreen
+import com.example.sajisehat.feature.trek.ui.TrekDetailScreen
 import com.example.sajisehat.feature.trek.ui.TrekScreen
 import com.example.sajisehat.navigation.Dest
 import com.example.sajisehat.navigation.isOnRoute
@@ -51,6 +54,7 @@ import com.example.sajisehat.ui.components.bottombar.AppBottomBar
 import com.example.sajisehat.ui.components.bottombar.BottomNavItem
 import com.example.sajisehat.ui.components.bottombar.CenterScanFab
 import com.example.sajisehat.ui.components.bottombar.rememberBottomBarSpec
+import java.time.LocalDate
 
 @Composable
 fun SajisehatApp() {
@@ -179,8 +183,8 @@ fun SajisehatApp() {
                     onPrevMonth = trekViewModel::onPrevMonth,
                     onNextMonth = trekViewModel::onNextMonth,
                     onSeeDetailToday = {
-                        // nanti kalau sudah ada halaman detail:
-                        // nav.navigate(Dest.TrekDetail.createRoute(LocalDate.now().toString()))
+                        val todayString = LocalDate.now().toString() // "yyyy-MM-dd"
+                        nav.navigate(Dest.TrekDetail.route(todayString))
                     }
                 )
             }
@@ -221,6 +225,30 @@ fun SajisehatApp() {
                             popUpTo(Dest.Home.route) { inclusive = false }
                         }
                     }
+                )
+            }
+            composable(
+                route = Dest.TrekDetail.route,
+                arguments = listOf(
+                    navArgument("date") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val dateString = backStackEntry.arguments?.getString("date").orEmpty()
+
+                val trekDetailViewModel: TrekDetailViewModel = viewModel(
+                    factory = TrekDetailViewModelFactory(
+                        trekRepository = AppGraph.trekRepository,
+                        authRepository = AppGraph.authRepo,
+                        dateString = dateString
+                    )
+                )
+
+                val detailState by trekDetailViewModel.uiState.collectAsState()
+
+                TrekDetailScreen(
+                    state = detailState,
+                    onBack = { nav.popBackStack() },
+                    onDeleteItem = { id -> trekDetailViewModel.onDeleteItem(id) }
                 )
             }
 

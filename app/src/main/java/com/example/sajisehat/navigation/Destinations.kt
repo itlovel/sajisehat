@@ -24,6 +24,9 @@ sealed class Dest(val route: String) {
     data object Detail  : Dest("detail/{id}") {
         fun route(id: String) = "detail/$id"
     }
+    object TrekDetail : Dest("trekDetail/{date}") {
+        fun route(date: String): String = "trekDetail/$date"
+    }
     data object SaveTrek : Dest("save_trek/{sugar}") {
         fun route(sugar: Double): String = "save_trek/$sugar"
     }
