@@ -1,14 +1,16 @@
 package com.example.sajisehat.feature.trek.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,8 +23,6 @@ import com.example.sajisehat.feature.trek.model.SugarLevelUi
 import com.example.sajisehat.feature.trek.model.TodaySummaryUi
 import com.example.sajisehat.feature.trek.ui.components.DailySugarProgressBar
 import com.example.sajisehat.feature.trek.ui.components.DailySugarSummaryCard
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +32,12 @@ fun TrekDetailScreen(
     onDeleteItem: (String) -> Unit,
     onAddManual: () -> Unit
 ) {
+    val darkBlue = Color(0xFF001A72)
+    val yellow = Color(0xFFFFC107)
+
+    // state untuk dialog konfirmasi hapus
+    var itemToDelete by remember { mutableStateOf<TrekDetailItemUi?>(null) }
+
     Scaffold(
         topBar = {
             TopBarChild(
@@ -40,40 +46,51 @@ fun TrekDetailScreen(
             )
         },
         floatingActionButton = {
-            // FAB "Tambah Manual?"
-            ExtendedFloatingActionButton(
-                onClick = onAddManual,
-                icon = {
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    shadowElevation = 4.dp,
+                    color = yellow
+                ) {
+                    Text(
+                        text = "Tambah Manual?",
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FloatingActionButton(
+                    onClick = onAddManual,
+                    shape = CircleShape,
+                    containerColor = yellow,
+                    contentColor = Color.White
+                ) {
                     Icon(
                         imageVector = Icons.Filled.Add,
                         contentDescription = "Tambah manual"
                     )
-                },
-                text = {
-                    Text(text = "Tambah Manual?")
                 }
-            )
+            }
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(horizontal = 16.dp, vertical = 16.dp)
         ) {
-            // Tanggal yang sedang dilihat
-            val formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale("id"))
-            Text(
-                text = "Tanggal: ${state.date.format(formatter)}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold
-            )
 
-            Spacer(Modifier.height(8.dp))
+            // Tanggal disembunyikan dari UI, tapi state.date tetap ada di data layer.
 
             state.todaySummary?.let { summary ->
                 TodaySummaryCard(summary = summary)
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(24.dp))
             }
 
             Text(
@@ -82,7 +99,7 @@ fun TrekDetailScreen(
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(12.dp))
 
             if (state.isLoading) {
                 Box(
@@ -102,12 +119,15 @@ fun TrekDetailScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    contentPadding = PaddingValues(bottom = 96.dp)
                 ) {
                     items(state.items, key = { it.id }) { item ->
                         TrekDetailItemCard(
                             item = item,
-                            onDelete = { onDeleteItem(item.id) }
+                            borderColor = darkBlue,
+                            contentColor = darkBlue,
+                            onDeleteClick = { itemToDelete = item }
                         )
                     }
                 }
@@ -122,59 +142,90 @@ fun TrekDetailScreen(
                 )
             }
         }
+
+        // Dialog konfirmasi hapus
+        itemToDelete?.let { selected ->
+            AlertDialog(
+                onDismissRequest = { itemToDelete = null },
+                title = {
+                    Text(
+                        text = "Hapus Riwayat?",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                },
+                text = {
+                    Text(
+                        text = "Yakin ingin menghapus riwayat konsumsi ini?",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onDeleteItem(selected.id)
+                            itemToDelete = null
+                        }
+                    ) {
+                        Text(
+                            text = "Hapus",
+                            color = Color.Red,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { itemToDelete = null }
+                    ) {
+                        Text(text = "Batal")
+                    }
+                }
+            )
+        }
     }
 }
-
 
 @Composable
 private fun TodaySummaryCard(summary: TodaySummaryUi) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = "Konsumsi Gula Hari Ini",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
-
-        // Card hati + teks (reusable)
         DailySugarSummaryCard(
             totalSugarGram = summary.totalGram,
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Progress bar harian – di detail tidak ada preview kuning,
-        // jadi addedSugar = 0.0 → bar full biru
         DailySugarProgressBar(
             totalNow = summary.totalGram,
             addedSugar = 0.0,
             modifier = Modifier.fillMaxWidth()
         )
-
-        // (opsional) teks ringkasan angka
-        Text(
-            text = "Total: ${summary.totalGram.toInt()} gram (${summary.percentageOfNeed}%)",
-            style = MaterialTheme.typography.bodySmall,
-            color = Color.Gray
-        )
+        // Text total di bawah card dihilangkan agar mirip Figma
     }
 }
 
 @Composable
 private fun TrekDetailItemCard(
     item: TrekDetailItemUi,
-    onDelete: () -> Unit
+    borderColor: Color,
+    contentColor: Color,
+    onDeleteClick: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, borderColor)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -184,8 +235,10 @@ private fun TrekDetailItemCard(
                 Text(
                     text = item.productName,
                     style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = contentColor
                 )
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "Gula: ${item.sugarGram.toInt()} gram - ${item.percentageOfDailyNeed}%",
                     style = MaterialTheme.typography.bodySmall,
@@ -193,11 +246,11 @@ private fun TrekDetailItemCard(
                 )
             }
 
-            IconButton(onClick = onDelete) {
+            IconButton(onClick = onDeleteClick) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Hapus",
-                    tint = Color.Gray
+                    tint = contentColor
                 )
             }
         }
