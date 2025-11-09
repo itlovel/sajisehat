@@ -21,6 +21,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.sajisehat.di.AppGraph
+import com.example.sajisehat.feature.trek.TrekViewModel
+import com.example.sajisehat.feature.trek.TrekViewModelFactory
 import com.example.sajisehat.feature.auth.login.LoginEmailScreen
 import com.example.sajisehat.feature.auth.login.LoginScreen
 import com.example.sajisehat.feature.auth.onboarding.OnboardingScreen
@@ -157,7 +162,29 @@ fun SajisehatApp() {
 
             // ---------- MAIN ----------
             composable(Dest.Home.route)    { HomeScreen(onOpen = { id -> nav.navigate(Dest.Detail.route(id)) }) }
-            composable(Dest.Trek.route)    { TrekScreen() }
+            composable(Dest.Trek.route) { backStackEntry ->
+                // Buat ViewModel untuk Trek
+                val trekViewModel: TrekViewModel = viewModel(
+                    factory = TrekViewModelFactory(
+                        trekRepository = AppGraph.trekRepository,
+                        authRepository = AppGraph.authRepo
+                    )
+                )
+
+                // Observasi uiState dari ViewModel
+                val state by trekViewModel.uiState.collectAsState()
+
+                TrekScreen(
+                    state = state,
+                    onPrevMonth = trekViewModel::onPrevMonth,
+                    onNextMonth = trekViewModel::onNextMonth,
+                    onSeeDetailToday = {
+                        // nanti kalau sudah ada halaman detail:
+                        // nav.navigate(Dest.TrekDetail.createRoute(LocalDate.now().toString()))
+                    }
+                )
+            }
+
             composable(Dest.Scan.route) {
                 ScanRoute(navController = nav)
             }
