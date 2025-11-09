@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
@@ -26,13 +27,29 @@ import java.util.Locale
 fun TrekDetailScreen(
     state: TrekDetailUiState,
     onBack: () -> Unit,
-    onDeleteItem: (String) -> Unit
+    onDeleteItem: (String) -> Unit,
+    onAddManual: () -> Unit
 ) {
     Scaffold(
         topBar = {
             TopBarChild(
                 title = "Cek Detail",
                 onBack = onBack
+            )
+        },
+        floatingActionButton = {
+            // FAB "Tambah Manual?"
+            ExtendedFloatingActionButton(
+                onClick = onAddManual,
+                icon = {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Tambah manual"
+                    )
+                },
+                text = {
+                    Text(text = "Tambah Manual?")
+                }
             )
         }
     ) { innerPadding ->

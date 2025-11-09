@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -248,9 +249,28 @@ fun SajisehatApp() {
                 TrekDetailScreen(
                     state = detailState,
                     onBack = { nav.popBackStack() },
-                    onDeleteItem = { id -> trekDetailViewModel.onDeleteItem(id) }
+                    onDeleteItem = { id -> trekDetailViewModel.onDeleteItem(id) },
+                    onAddManual = {
+                        nav.navigate(Dest.TrekManualInput.route(dateString))
+                    }
+                )
+
+            }
+            composable(
+                route = Dest.TrekManualInput.route,
+                arguments = listOf(
+                    navArgument("date") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val dateString = backStackEntry.arguments?.getString("date").orEmpty()
+
+                // Sementara: placeholder dulu, nanti kita ganti dengan ManualInputScreen + ViewModel
+                Text(
+                    text = "Form Tambah Manual untuk tanggal $dateString",
+                    modifier = Modifier.padding(16.dp)
                 )
             }
+
 
         }
     }
