@@ -42,4 +42,9 @@ interface TrekRepository {
         userId: String,
         date: LocalDate
     ): List<TrackedProduct>
+
+    suspend fun deleteTrackedProduct(
+        userId: String,
+        trekId: String
+    )
 }

@@ -124,4 +124,15 @@ class FirestoreTrekRepository(
             (doc.getDouble("sugarGram") ?: 0.0)
         }
     }
+
+    override suspend fun deleteTrackedProduct(
+        userId: String,
+        trekId: String
+    ) {
+        trekCollection(userId)
+            .document(trekId)
+            .delete()
+            .await()
+    }
+
 }
