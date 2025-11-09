@@ -39,7 +39,6 @@ fun AppBottomBar(
     val backEntry by nav.currentBackStackEntryAsState()
     val dest = backEntry?.destination
 
-    // full-bleed: tanpa padding kiri/kanan
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -104,7 +103,6 @@ fun AppBottomBar(
                     )
                 }
 
-                // tengah: slot label "Scan"
                 Box(
                     modifier = Modifier
                         .width(spacerWidth)
@@ -125,7 +123,6 @@ fun AppBottomBar(
                     }
                 }
 
-                // kanan
                 rightItems.forEach { item ->
                     val selected = dest.isOnRoute(item.route)
                     val resId = if (selected) item.iconSelectedRes else item.iconRes
