@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sajisehat.R
 import com.example.sajisehat.di.AppGraph
 import com.example.sajisehat.feature.topbar.TopBarChild
+import kotlinx.coroutines.launch
 
 @Composable
 private fun DailySugarSummaryCard(
@@ -245,152 +248,166 @@ private fun DailySugarProgressBar(
         }
     }
 }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun SaveToTrekScreen(
-        sugarGram: Double,
-        onBack: () -> Unit,
-        onSaved: () -> Unit
-    ) {
-        val viewModel: SaveTrekViewModel = viewModel(
-            factory = SaveTrekViewModelFactory(
-                trekRepository = AppGraph.trekRepository,
-                authRepository = AppGraph.authRepo,
-                sugarGram = sugarGram
-            )
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SaveToTrekScreen(
+    sugarGram: Double,
+    onBack: () -> Unit,
+    onSaved: () -> Unit
+) {
+    val viewModel: SaveTrekViewModel = viewModel(
+        factory = SaveTrekViewModelFactory(
+            trekRepository = AppGraph.trekRepository,
+            authRepository = AppGraph.authRepo,
+            sugarGram = sugarGram
         )
-        val state = viewModel.uiState
+    )
+    val state = viewModel.uiState
 
-        Scaffold(
-            topBar = {
-                TopBarChild(
-                    title = "Simpan Produk dalam Trek",
-                    onBack = onBack
+    // --- SNACKBAR STATE & SCOPE ---
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+    Scaffold(
+        topBar = {
+            TopBarChild(
+                title = "Simpan Produk dalam Trek",
+                onBack = onBack
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+
+            // ====== Teks judul section ======
+            Text(
+                text = "Trek Gula-mu Saat Ini",
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF001C54)
                 )
-            }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+            )
+            Text(
+                text = "Kalkulasi jumlah trek gula, jika kamu mengonsumsi produk yang ditambahkan",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Color(0xFF777777)
+                )
+            )
 
-                // Judul section
-                Text(
-                    text = "Trek Gula-mu Saat Ini",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF001C54)
+            // ====== Kartu utama ala Figma ======
+            DailySugarSummaryCard(
+                totalSugarAfter = state.totalAfter,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            // ====== progress bar ala Figma ======
+            DailySugarProgressBar(
+                totalBefore = state.totalBefore,
+                addedSugar = state.sugarGram,
+                totalAfter = state.totalAfter,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Divider(Modifier.padding(top = 4.dp))
+
+            // ====== Informasi Produk ======
+            Text(
+                text = "Informasi Produk",
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            Text(
+                text = "Beri tahu kami nama produk yang baru Anda Scan:",
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            OutlinedTextField(
+                value = state.productName,
+                onValueChange = { viewModel.onProductNameChange(it) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                enabled = !state.isLoading,
+                placeholder = {
+                    Text(
+                        "Contoh: Sereal Coklat 30g",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = Color(0xFFB0B0B0)
+                        )
                     )
-                )
+                }
+            )
+
+            if (state.errorMessage != null) {
                 Text(
-                    text = "Kalkulasi jumlah trek gula, jika kamu mengonsumsi produk yang ditambahkan",
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = Color(0xFF777777)
-                    )
-                )
-
-                // Card konsumsi + progress bar
-                DailySugarSummaryCard(
-                    totalSugarAfter = state.totalAfter,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                DailySugarProgressBar(
-                    totalBefore = state.totalBefore,
-                    addedSugar = state.sugarGram,
-                    totalAfter = state.totalAfter,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Divider(Modifier.padding(top = 4.dp))
-
-                // Informasi produk
-                Text(
-                    text = "Informasi Produk",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-                Text(
-                    text = "Beri tahu kami nama produk yang baru Anda Scan:",
+                    text = state.errorMessage ?: "",
+                    color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
+            }
 
-                OutlinedTextField(
-                    value = state.productName,
-                    onValueChange = { viewModel.onProductNameChange(it) },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
+            Spacer(Modifier.weight(1f))
+
+            // ====== Tombol bawah (Kembali & Simpan) ======
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                OutlinedButton(
+                    onClick = onBack,
                     enabled = !state.isLoading,
-                    placeholder = {
-                        Text(
-                            "Contoh: Sereal Coklat 30g",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = Color(0xFFB0B0B0)
-                            )
-                        )
-                    }
-                )
-
-                if (state.errorMessage != null) {
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(40.dp),
+                    shape = RoundedCornerShape(30.dp)
+                ) {
                     Text(
-                        text = state.errorMessage ?: "",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall
+                        "Kembali",
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
 
-                Spacer(Modifier.weight(1f))
-
-                // Tombol bawah
-                Row(
+                Button(
+                    onClick = {
+                        viewModel.save(
+                            onSuccess = onSaved,
+                            onError = { message ->
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = message
+                                    )
+                                }
+                            }
+                        )
+                    },
+                    enabled = !state.isLoading && state.productName.isNotBlank(),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        .weight(1f)
+                        .height(40.dp),
+                    shape = RoundedCornerShape(30.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF002A7A),
+                        disabledContainerColor = Color(0xFFB0B8D0)
+                    )
                 ) {
-                    OutlinedButton(
-                        onClick = onBack,
-                        enabled = !state.isLoading,
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
-                        shape = RoundedCornerShape(30.dp)
-                    ) {
-                        Text(
-                            "Kembali",
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-
-                    Button(
-                        onClick = {
-                            viewModel.save(
-                                onSuccess = onSaved,
-                                onError = { /* TODO snackbar */ }
-                            )
-                        },
-                        enabled = !state.isLoading && state.productName.isNotBlank(),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(48.dp),
-                        shape = RoundedCornerShape(30.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF002A7A),
-                            disabledContainerColor = Color(0xFFB0B8D0)
-                        )
-                    ) {
-                        Text(
-                            text = if (state.isLoading) "Menyimpan..." else "Simpan",
-                            color = Color.White,
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
+                    Text(
+                        text = if (state.isLoading) "Menyimpan..." else "Simpan",
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         }
     }
+}
+

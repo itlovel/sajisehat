@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.vision.common)
     implementation(libs.play.services.mlkit.text.recognition.common)
     implementation(libs.play.services.mlkit.text.recognition)
+    implementation(libs.androidx.tv.material)
 //    implementation(libs.androidx.navigation.common.android)
 //    implementation(libs.androidx.navigation.runtime.android)
 //    implementation(libs.androidx.navigation.compose.jvmstubs.v296)

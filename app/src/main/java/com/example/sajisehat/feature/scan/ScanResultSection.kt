@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -86,10 +85,13 @@ fun ScanResultSection(
             // JUDUL BESAR
             Text(
                 text = "Hasil Kalkulasi Scan Label Kamu:",
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .padding(top = 8.dp)
-                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 8.dp, bottom = 4.dp)
+                    .fillMaxWidth()
             )
 
             // KARTU UTAMA (gradient biru + gif)
@@ -114,7 +116,9 @@ fun ScanResultSection(
                 ) {
                     Text(
                         text = "Kalkulasi per 1x Takaran Saji",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                        style = MaterialTheme.typography.titleSmall.copy(
+                            fontWeight = FontWeight.Bold
+                        )
                     )
 
                     InfoRow(
@@ -151,7 +155,9 @@ fun ScanResultSection(
                     ) {
                         Text(
                             text = "Informasi Berdasarkan Produk",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.Bold
+                            )
                         )
 
                         Column(
@@ -188,8 +194,9 @@ fun ScanResultSection(
                         "Tampilkan Lebih Sedikit Informasi"
                     else
                         "Tampilkan Lebih Banyak Informasi",
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        color = Color(0xFFB0B0B0)
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = Color(0xFFB0B0B0),
+                        fontWeight = FontWeight.Medium
                     )
                 )
 
@@ -211,7 +218,7 @@ fun ScanResultSection(
             // ========= TEXT KECIL DI ATAS BUTTON =========
             Text(
                 text = "Ingin tambahkan produk ke track gula kamu hari ini?",
-                style = MaterialTheme.typography.bodyMedium.copy(
+                style = MaterialTheme.typography.bodySmall.copy(
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFF555555)
                 ),
@@ -233,11 +240,11 @@ fun ScanResultSection(
                     onClick = onScanAgain,
                     modifier = Modifier
                         .weight(1f)
-                        .height(48.dp)
+                        .height(40.dp)
                 ) {
                     Text(
                         text = "Scan Lagi",
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
 
@@ -245,14 +252,13 @@ fun ScanResultSection(
                     onClick = onSaveToTrek,
                     modifier = Modifier
                         .weight(1f)
-                        .height(48.dp)
+                        .height(40.dp)
                 ) {
                     Text(
                         text = "Tambah",
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
-
             }
         }
     }
@@ -271,11 +277,13 @@ private fun InfoRow(
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = Color(0xFF555555)
+            )
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = MaterialTheme.typography.bodySmall.copy(
                 fontWeight = FontWeight.SemiBold
             ),
             textAlign = TextAlign.End

@@ -26,4 +26,6 @@ sealed class Dest(val route: String) {
     }
     data object SaveTrek : Dest("save_trek/{sugar}") {
         fun route(sugar: Double): String = "save_trek/$sugar"
-    }}
+    }
+    data object SaveTrekSuccess : Dest("save_trek_success")
+}
