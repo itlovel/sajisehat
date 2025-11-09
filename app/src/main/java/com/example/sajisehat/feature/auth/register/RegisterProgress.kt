@@ -13,6 +13,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.example.sajisehat.R
+import com.example.sajisehat.SajisehatApp
+import com.example.sajisehat.ui.theme.SajiTextStyles
 import kotlin.math.min
 
 @Composable
@@ -52,7 +54,7 @@ fun RegisterProgress(
                 if (title.isNotBlank()) {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.labelSmall,
+                        style = SajiTextStyles.BodyBold,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.align(Alignment.Start)
                     )
@@ -75,7 +77,7 @@ fun RegisterProgress(
                 ) {
                     Text(
                         text = "$percent%",
-                        style = MaterialTheme.typography.labelLarge,
+                        style = SajiTextStyles.BodySemibold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }

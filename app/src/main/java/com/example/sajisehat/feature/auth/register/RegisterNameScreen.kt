@@ -12,6 +12,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.example.sajisehat.ui.components.CompactOutlinedTextField
+import com.example.sajisehat.ui.theme.SajiTextStyles
 
 @Composable
 fun RegisterNameScreen(
@@ -37,7 +38,7 @@ fun RegisterNameScreen(
             Spacer(Modifier.height(50.dp))
             Text(
                 text = "Masukkan Nama Anda",
-                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.ExtraBold)
+                style = SajiTextStyles.H4Bold
             )
 
             Spacer(Modifier.height(16.dp))
@@ -80,7 +81,7 @@ fun RegisterNameScreen(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text("Lanjut", style = MaterialTheme.typography.titleMedium)
+                Text("Lanjut", style = SajiTextStyles.BodyLargeBold)
             }
         }
     }
@@ -95,7 +96,7 @@ private fun RequiredLabel(text: String) {
     }
     Text(
         text = styled,
-        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium),
+        style = SajiTextStyles.Body,
         color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier
             .fillMaxWidth()

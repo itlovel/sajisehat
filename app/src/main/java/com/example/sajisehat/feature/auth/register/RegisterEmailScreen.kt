@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withStyle
 import com.example.sajisehat.ui.components.CompactOutlinedTextField
+import com.example.sajisehat.ui.theme.SajiTextStyles
 
 @Composable
 fun RegisterEmailScreen(
@@ -33,7 +34,7 @@ fun RegisterEmailScreen(
             Spacer(Modifier.height(50.dp))
             Text(
                 text = "Masukkan Email Anda",
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold)
+                style = SajiTextStyles.H4Bold
             )
 
             Spacer(Modifier.height(16.dp))
@@ -63,7 +64,7 @@ fun RegisterEmailScreen(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text("Lanjut", style = MaterialTheme.typography.titleMedium)
+                Text("Lanjut", style = SajiTextStyles.BodyLargeBold)
             }
         }
     }
@@ -78,7 +79,7 @@ private fun RequiredLabel(text: String) {
     }
     Text(
         text = styled,
-        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium),
+        style = SajiTextStyles.Body,
         color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier
             .fillMaxWidth()

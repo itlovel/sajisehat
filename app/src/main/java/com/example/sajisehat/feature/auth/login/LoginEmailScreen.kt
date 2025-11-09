@@ -20,9 +20,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sajisehat.R
+import com.example.sajisehat.ui.theme.SajiTextStyles
 
 @Composable
 fun LoginEmailScreen(
@@ -59,15 +61,16 @@ fun LoginEmailScreen(
 
             Text(
                 text = "SAJISEHAT",
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
+                style = SajiTextStyles.H5Bold,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center
             )
 
             Spacer(Modifier.height(10.dp))
             Text(
                 text = "Masuk dengan akun yang sudah ada",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = SajiTextStyles.Body,
+                color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center
             )
 
@@ -131,7 +134,7 @@ fun LoginEmailScreen(
                     }
                     pop()
                 }
-                ClickableText(text = txt, style = MaterialTheme.typography.bodySmall, onClick = { _ -> })
+                ClickableText(text = txt, style = SajiTextStyles.Caption, onClick = { _ -> })
             }
 
             Spacer(Modifier.height(20.dp))
@@ -156,7 +159,7 @@ fun LoginEmailScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("Masuk", style = MaterialTheme.typography.titleMedium)
+                    Text("Masuk", style = SajiTextStyles.BodyLargeBold)
                 }
             }
 
@@ -166,7 +169,7 @@ fun LoginEmailScreen(
                 Text(
                     it,
                     color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = SajiTextStyles.Caption,
                     textAlign = TextAlign.Center
                 )
             }
@@ -174,10 +177,10 @@ fun LoginEmailScreen(
     }
 }
 
-/** Label wajib dengan tanda * berwarna aksen, diletakkan DI ATAS field. */
+
 @Composable
 private fun RequiredLabel(text: String) {
-    val starColor = MaterialTheme.colorScheme.secondary
+    val starColor = MaterialTheme.colorScheme.background
     val label = buildAnnotatedString {
         append(text)
         append(" ")
@@ -185,7 +188,7 @@ private fun RequiredLabel(text: String) {
     }
     Text(
         text = label,
-        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium),
+        style = SajiTextStyles.Body,
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 4.dp, bottom = 6.dp)
