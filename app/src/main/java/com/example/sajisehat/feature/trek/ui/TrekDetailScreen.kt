@@ -19,6 +19,8 @@ import com.example.sajisehat.feature.trek.model.TrekDetailItemUi
 import com.example.sajisehat.feature.trek.model.TrekDetailUiState
 import com.example.sajisehat.feature.trek.model.SugarLevelUi
 import com.example.sajisehat.feature.trek.model.TodaySummaryUi
+import com.example.sajisehat.feature.trek.ui.components.DailySugarProgressBar
+import com.example.sajisehat.feature.trek.ui.components.DailySugarSummaryCard
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -71,9 +73,8 @@ fun TrekDetailScreen(
 
             state.todaySummary?.let { summary ->
                 TodaySummaryCard(summary = summary)
+                Spacer(Modifier.height(12.dp))
             }
-
-            Spacer(Modifier.height(8.dp))
 
             Text(
                 text = "Riwayat Konsumsi Gula Hari Ini",
@@ -124,34 +125,39 @@ fun TrekDetailScreen(
     }
 }
 
+
 @Composable
 private fun TodaySummaryCard(summary: TodaySummaryUi) {
-    Card(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "Konsumsi Gula Hari Ini",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
+        Text(
+            text = "Konsumsi Gula Hari Ini",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
 
-            Spacer(Modifier.height(4.dp))
+        // Card hati + teks (reusable)
+        DailySugarSummaryCard(
+            totalSugarGram = summary.totalGram,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            Text(
-                text = "Status: ${summary.level.toDisplayText()}",
-                style = MaterialTheme.typography.bodyMedium
-            )
+        // Progress bar harian – di detail tidak ada preview kuning,
+        // jadi addedSugar = 0.0 → bar full biru
+        DailySugarProgressBar(
+            totalNow = summary.totalGram,
+            addedSugar = 0.0,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            Text(
-                text = "Total: ${summary.totalGram.toInt()} gram (${summary.percentageOfNeed}%)",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
+        // (opsional) teks ringkasan angka
+        Text(
+            text = "Total: ${summary.totalGram.toInt()} gram (${summary.percentageOfNeed}%)",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Gray
+        )
     }
 }
 

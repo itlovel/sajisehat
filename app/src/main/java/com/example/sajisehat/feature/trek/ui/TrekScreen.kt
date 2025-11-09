@@ -29,93 +29,40 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.ui.draw.clip
+import com.example.sajisehat.feature.trek.ui.components.DailySugarSummaryCard
+import com.example.sajisehat.feature.trek.ui.components.DailySugarProgressBar
 
 @Composable
 private fun TodaySection(
     today: TodaySummaryUi,
     onSeeDetailToday: () -> Unit
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    // Card ringkasan (icon hati + teks)
+    DailySugarSummaryCard(
+        totalSugarGram = today.totalGram,
+        modifier = Modifier.fillMaxWidth()
+    )
+
+    Spacer(Modifier.height(12.dp))
+
+    // Progress bar HARI INI → full biru (addedSugar = 0.0)
+    DailySugarProgressBar(
+        totalNow = today.totalGram,
+        addedSugar = 0.0,              // full biru
+        modifier = Modifier.fillMaxWidth()
+    )
+
+    Spacer(Modifier.height(12.dp))
+
+    // (opsional) tombol "Lihat detail hari ini"
+    Button(
+        onClick = onSeeDetailToday,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "Hari Ini",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            Text(
-                text = "Konsumsi Gula: ${today.level.toDisplayText()}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Text(
-                text = "Hari ini, kamu telah mengonsumsi ${today.totalGram.toInt()} gram gula",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            Text(
-                text = "WHO menyarankan bahwa standar gula harian manusia adalah tidak lebih dari 50 gram.",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                text = "Konsumsi gula-mu saat ini setara dengan ${today.percentageOfNeed}% dari kebutuhan gula-mu di hari ini",
-                style = MaterialTheme.typography.bodySmall
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            LinearProgressIndicator(
-                progress = (today.percentageOfNeed / 100f),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .clip(RoundedCornerShape(50)),
-            )
-
-            Spacer(Modifier.height(4.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("0 gr", style = MaterialTheme.typography.labelSmall)
-                Text("50 gr", style = MaterialTheme.typography.labelSmall)
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            Button(
-                onClick = onSeeDetailToday,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(50)
-            ) {
-                Text("Cek Detail >>")
-            }
-        }
+        Text("Lihat detail hari ini")
     }
 }
 
-private fun SugarLevelUi.toDisplayText(): String = when (this) {
-    SugarLevelUi.LOW -> "Rendah"
-    SugarLevelUi.MEDIUM -> "Sedang"
-    SugarLevelUi.HIGH -> "Tinggi"
-    SugarLevelUi.UNKNOWN -> "-"
-}
 
 @Composable
 private fun WeekSection(

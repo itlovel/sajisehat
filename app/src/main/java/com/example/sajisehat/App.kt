@@ -23,6 +23,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sajisehat.di.AppGraph
 import com.example.sajisehat.feature.trek.TrekViewModel
@@ -181,7 +182,9 @@ fun SajisehatApp() {
                 )
 
                 // Observasi uiState dari ViewModel
-                val state by trekViewModel.uiState.collectAsState()
+                val state = trekViewModel.uiState.collectAsState(
+                    initial = com.example.sajisehat.feature.trek.model.TrekUiState()
+                ).value
 
                 TrekScreen(
                     state = state,
@@ -248,7 +251,11 @@ fun SajisehatApp() {
                     )
                 )
 
-                val detailState by trekDetailViewModel.uiState.collectAsState()
+                val detailState = trekDetailViewModel.uiState.collectAsState(
+                    initial = com.example.sajisehat.feature.trek.model.TrekDetailUiState()
+                ).value
+
+
 
                 TrekDetailScreen(
                     state = detailState,
@@ -276,7 +283,9 @@ fun SajisehatApp() {
                     )
                 )
 
-                val inputState by manualViewModel.inputState.collectAsState()
+                val inputState = manualViewModel.inputState.collectAsState(
+                    initial = com.example.sajisehat.feature.trek.model.ManualInputUiState()
+                ).value
 
                 ManualInputScreen(
                     state = inputState,
