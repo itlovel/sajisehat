@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -45,17 +46,21 @@ fun ProfileMarkahScreen(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
         ) {
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(37.dp))
 
             Text(
                 text = "\uD83D\uDD0D Cari Produk Ber-Markah",
-                style = SajiTextStyles.BodyLargeBold
+                style = SajiTextStyles.BodyLargeBold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 text = "Telusuri informasi produk yang telah di-markah",
                 style = SajiTextStyles.Caption,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(Modifier.height(16.dp))
@@ -63,10 +68,13 @@ fun ProfileMarkahScreen(
             MarkahSearchField(
                 value = st.searchQuery,
                 onValueChange = vm::onSearchChange,
-                onClear = vm::onClearSearch
+                onClear = vm::onClearSearch,
+                modifier = Modifier
+                    .fillMaxWidth(0.85f)              // ~90% lebar layar
+                    .align(Alignment.CenterHorizontally)
             )
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(50.dp))
 
             when {
                 st.loading -> Box(
@@ -113,7 +121,8 @@ fun ProfileMarkahScreen(
 private fun MarkahSearchField(
     value: String,
     onValueChange: (String) -> Unit,
-    onClear: () -> Unit
+    onClear: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val borderColor = MaterialTheme.colorScheme.primary
 
@@ -122,8 +131,7 @@ private fun MarkahSearchField(
         border = BorderStroke(1.dp, borderColor),
         color = Color.White,
         tonalElevation = 0.dp,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .height(44.dp)
     ) {
         Row(
@@ -196,7 +204,6 @@ private fun MarkahProductRow(
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // gambar
             Surface(
                 shape = RoundedCornerShape(12.dp),
                 tonalElevation = 0.dp,
@@ -241,7 +248,6 @@ private fun MarkahProductRow(
                 )
                 Spacer(Modifier.height(6.dp))
 
-                // gula & takaran
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -261,7 +267,6 @@ private fun MarkahProductRow(
                 }
             }
 
-            // ikon mark
             IconButton(
                 onClick = onToggleBookmark,
                 modifier = Modifier.padding(start = 4.dp)
