@@ -66,3 +66,20 @@ data class TrekDetailUiState(
     val items: List<TrekDetailItemUi> = emptyList(),
     val errorMessage: String? = null
 )
+
+data class ManualInputUiState(
+    val productName: String = "",
+    val sugarPerServingText: String = "",
+    val servingSizeText: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val isValid: Boolean = false
+)
+
+data class ManualResultUi(
+    val productName: String,
+    val sugarPerServingGram: Double,
+    val servingSizeGram: Double?,
+    val percentOfDailyNeed: Int,
+    val level: SugarLevelUi
+)

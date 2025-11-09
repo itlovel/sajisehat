@@ -44,8 +44,12 @@ import com.example.sajisehat.feature.profile.ui.ProfileScreen
 import com.example.sajisehat.feature.scan.ScanRoute
 import com.example.sajisehat.feature.trek.TrekDetailViewModel
 import com.example.sajisehat.feature.trek.TrekDetailViewModelFactory
+import com.example.sajisehat.feature.trek.TrekManualViewModel
+import com.example.sajisehat.feature.trek.TrekManualViewModelFactory
 import com.example.sajisehat.feature.trek.save.SaveToTrekScreen
 import com.example.sajisehat.feature.trek.save.SaveTrekSuccessScreen
+import com.example.sajisehat.feature.trek.ui.ManualCalcScreen
+import com.example.sajisehat.feature.trek.ui.ManualInputScreen
 import com.example.sajisehat.feature.trek.ui.TrekDetailScreen
 import com.example.sajisehat.feature.trek.ui.TrekScreen
 import com.example.sajisehat.navigation.Dest
@@ -264,10 +268,75 @@ fun SajisehatApp() {
             ) { backStackEntry ->
                 val dateString = backStackEntry.arguments?.getString("date").orEmpty()
 
-                // Sementara: placeholder dulu, nanti kita ganti dengan ManualInputScreen + ViewModel
-                Text(
-                    text = "Form Tambah Manual untuk tanggal $dateString",
-                    modifier = Modifier.padding(16.dp)
+                val manualViewModel: TrekManualViewModel = viewModel(
+                    factory = TrekManualViewModelFactory(
+                        trekRepository = AppGraph.trekRepository,
+                        authRepository = AppGraph.authRepo,
+                        dateString = dateString
+                    )
+                )
+
+                val inputState by manualViewModel.inputState.collectAsState()
+
+                ManualInputScreen(
+                    state = inputState,
+                    onBack = { nav.popBackStack() },
+                    onProductNameChange = manualViewModel::onProductNameChange,
+                    onSugarPerServingChange = manualViewModel::onSugarPerServingChange,
+                    onServingSizeChange = manualViewModel::onServingSizeChange,
+                    onNext = {
+                        val result = manualViewModel.buildManualResult()
+                        if (result != null) {
+                            nav.navigate(Dest.TrekManualCalc.route(dateString))
+                        }
+                    }
+                )
+            }
+            composable(
+                route = Dest.TrekManualCalc.route,
+                arguments = listOf(
+                    navArgument("date") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val dateString = backStackEntry.arguments?.getString("date").orEmpty()
+
+                // Ambil entry SEBELUM route ini (yaitu TrekManualInput)
+                val parentEntry = remember(backStackEntry) {
+                    nav.previousBackStackEntry ?: backStackEntry
+                }
+
+                // Pakai factory yang sama seperti waktu bikin di ManualInput
+                val factory = TrekManualViewModelFactory(
+                    trekRepository = AppGraph.trekRepository,
+                    authRepository = AppGraph.authRepo,
+                    dateString = dateString
+                )
+
+                val manualViewModel: TrekManualViewModel =
+                    ViewModelProvider(parentEntry, factory)[TrekManualViewModel::class.java]
+
+                val result = manualViewModel.getLastResult()
+                    ?: manualViewModel.buildManualResult()
+                    ?: run {
+                        nav.popBackStack()
+                        return@composable
+                    }
+
+                ManualCalcScreen(
+                    result = result,
+                    onBack = { nav.popBackStack() },
+                    onAddToTrek = {
+                        manualViewModel.saveToTrek(
+                            onSuccess = {
+                                nav.navigate(Dest.SaveTrekSuccess.route) {
+                                    popUpTo(Dest.Trek.route) { inclusive = false }
+                                }
+                            },
+                            onError = {
+                                println("Error save manual trek: $it")
+                            }
+                        )
+                    }
                 )
             }
 

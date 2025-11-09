@@ -34,4 +34,8 @@ sealed class Dest(val route: String) {
     object TrekManualInput : Dest("trekManualInput/{date}") {
         fun route(date: String) = "trekManualInput/$date"
     }
+    object TrekManualCalc : Dest("trekManualCalc/{date}") {
+        fun route(date: String) = "trekManualCalc/$date"
+    }
+
 }
