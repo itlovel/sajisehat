@@ -27,7 +27,7 @@ fun TopBarChild(
     onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     showBack: Boolean = onBack != null,
-    containerColor: Color = Color(0xFF002A7A),
+    containerColor: Color = Color(0xFF00084F),
     contentColor: Color = Color.White,
     height: Dp = 56.dp,
     roundedBottomRadius: Dp = 16.dp
