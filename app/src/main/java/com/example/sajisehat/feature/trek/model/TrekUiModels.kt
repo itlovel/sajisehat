@@ -51,3 +51,18 @@ data class TrekUiState(
     val monthSummary: MonthSummaryUi? = null,
     val errorMessage: String? = null
 )
+
+data class TrekDetailItemUi(
+    val id: String,
+    val productName: String,
+    val sugarGram: Double,
+    val percentageOfDailyNeed: Int
+)
+
+data class TrekDetailUiState(
+    val isLoading: Boolean = true,
+    val date: LocalDate = LocalDate.now(),
+    val todaySummary: TodaySummaryUi? = null,
+    val items: List<TrekDetailItemUi> = emptyList(),
+    val errorMessage: String? = null
+)
