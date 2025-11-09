@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.sajisehat.R
 import com.example.sajisehat.di.AppGraph
 import com.example.sajisehat.feature.topbar.TopBarChild
+import com.example.sajisehat.feature.trek.model.calculateDailyPercent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -31,7 +32,7 @@ private fun DailySugarSummaryCard(
     totalSugarAfter: Double,
     modifier: Modifier = Modifier
 ) {
-    val level = getSugarLevelUi(totalSugarAfter)
+    val level = getProductSugarLevel(totalSugarAfter)
     val limitGram = 50
 
     val cardStrokeColor = Color(0xFFDDDDDD)          // abu tua tipis
@@ -60,9 +61,9 @@ private fun DailySugarSummaryCard(
             Image(
                 painter = painterResource(
                     when (level) {
-                        SugarLevelUi.LOW -> R.drawable.ic_sugar_low
-                        SugarLevelUi.MEDIUM -> R.drawable.ic_sugar_medium
-                        SugarLevelUi.HIGH -> R.drawable.ic_sugar_high
+                        ProductSugarLevelUi.LOW -> R.drawable.ic_sugar_low
+                        ProductSugarLevelUi.MEDIUM -> R.drawable.ic_sugar_medium
+                        ProductSugarLevelUi.HIGH -> R.drawable.ic_sugar_high
                     }
                 ),
                 contentDescription = null,
