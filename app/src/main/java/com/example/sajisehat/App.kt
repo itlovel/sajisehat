@@ -62,6 +62,12 @@ import com.example.sajisehat.ui.components.bottombar.BottomNavItem
 import com.example.sajisehat.ui.components.bottombar.CenterScanFab
 import com.example.sajisehat.ui.components.bottombar.rememberBottomBarSpec
 import java.time.LocalDate
+import com.example.sajisehat.feature.catalog.ui.CatalogTab
+
+
+
+private const val ROUTE_CATALOG_ARTICLES = "catalog_articles"
+private const val ROUTE_CATALOG_VIDEOS   = "catalog_videos"
 
 @Composable
 fun SajisehatApp() {
@@ -95,7 +101,9 @@ fun SajisehatApp() {
         Dest.Scan.route,
         Dest.Catalog.route,
         Dest.Profile.route,
-        Dest.Markah.route)
+        Dest.Markah.route,
+        ROUTE_CATALOG_ARTICLES,
+        ROUTE_CATALOG_VIDEOS  )
     val backStackEntry by nav.currentBackStackEntryAsState()
     val currentDest = backStackEntry?.destination
     val showBar = currentDest?.hierarchy?.any { it.route in barRoutes } == true
@@ -178,7 +186,36 @@ fun SajisehatApp() {
             }
 
             // ---------- MAIN ----------
-            composable(Dest.Home.route)    { HomeScreen(onOpen = { id -> nav.navigate(Dest.Detail.route(id)) }) }
+//            composable(Dest.Home.route)    { HomeScreen(onOpen = { id -> nav.navigate(Dest.Detail.route(id)) }) }
+            composable(Dest.Home.route) {
+                HomeScreen(
+                    onOpen = { key ->
+                        when (key) {
+                            "addManual" -> {
+                                // arahkan ke input manual trek untuk hari ini
+                                val today = LocalDate.now().toString() // "yyyy-MM-dd"
+                                nav.navigate(Dest.TrekManualInput.route(today))
+                            }
+                            "articles" -> {
+                                // ke katalog tab ARTIKEL
+                                nav.navigate(ROUTE_CATALOG_ARTICLES)
+                            }
+                            "videos" -> {
+                                // ke katalog tab VIDEO
+                                nav.navigate(ROUTE_CATALOG_VIDEOS)
+                            }
+                            else -> {
+                                // fallback: kalau suatu saat kamu pakai onOpen(idProduk)
+                                nav.navigate(Dest.Detail.route(key))
+                            }
+                        }
+                    },
+                    onOpenProfile = {
+                        nav.navigateSingleTopTo(Dest.Profile.route)
+                    }
+                )
+            }
+
             composable(Dest.Trek.route) { backStackEntry ->
                 // Buat ViewModel untuk Trek
                 val trekViewModel: TrekViewModel = viewModel(
@@ -207,20 +244,42 @@ fun SajisehatApp() {
                 ScanRoute(navController = nav)
             }
             composable(Dest.Catalog.route) {
-                CatalogScreen()
-            }
-
-            composable(Dest.Profile.route) {
-                ProfileScreen(
-                    onGoSettingsMarkah = { nav.navigate(Dest.Markah.route) },
-                    onGoNotificationSettings = { /* nav.navigate("notifSettings") */ },
-                    onLoggedOut = {
-                        nav.navigate(Dest.Login.route) {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    }
+                CatalogScreen(
+                    onOpenProductDetail = { id ->
+                        nav.navigate(Dest.Detail.route(id))
+                    },
+                    onOpenProfile = {
+                        nav.navigateSingleTopTo(Dest.Profile.route)
+                    },
+                    startTab = CatalogTab.PRODUCT
                 )
             }
+
+            composable(ROUTE_CATALOG_ARTICLES) {
+                CatalogScreen(
+                    onOpenProductDetail = { id ->
+                        nav.navigate(Dest.Detail.route(id))
+                    },
+                    onOpenProfile = {
+                        nav.navigateSingleTopTo(Dest.Profile.route)
+                    },
+                    startTab = CatalogTab.ARTICLE
+                )
+            }
+
+            composable(ROUTE_CATALOG_VIDEOS) {
+                CatalogScreen(
+                    onOpenProductDetail = { id ->
+                        nav.navigate(Dest.Detail.route(id))
+                    },
+                    onOpenProfile = {
+                        nav.navigateSingleTopTo(Dest.Profile.route)
+                    },
+                    startTab = CatalogTab.VIDEO
+                )
+            }
+
+
             composable(Dest.Profile.route) {
                 ProfileScreen(
                     onGoSettingsMarkah = { nav.navigate(Dest.Markah.route) },
