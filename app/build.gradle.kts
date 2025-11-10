@@ -42,6 +42,7 @@ android {
 
 dependencies {
 
+    implementation ("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -58,6 +59,11 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.datastore.preferences.core.android)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.vision.common)
+    implementation(libs.play.services.mlkit.text.recognition.common)
+    implementation(libs.play.services.mlkit.text.recognition)
+    implementation(libs.androidx.tv.material)
 //    implementation(libs.androidx.navigation.common.android)
 //    implementation(libs.androidx.navigation.runtime.android)
 //    implementation(libs.androidx.navigation.compose.jvmstubs.v296)
