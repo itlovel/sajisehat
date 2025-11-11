@@ -63,7 +63,7 @@ import com.example.sajisehat.ui.components.bottombar.CenterScanFab
 import com.example.sajisehat.ui.components.bottombar.rememberBottomBarSpec
 import java.time.LocalDate
 import com.example.sajisehat.feature.catalog.ui.CatalogTab
-
+import com.example.sajisehat.feature.notification.NotificationScreen
 
 
 private const val ROUTE_CATALOG_ARTICLES = "catalog_articles"
@@ -103,7 +103,8 @@ fun SajisehatApp() {
         Dest.Profile.route,
         Dest.Markah.route,
         ROUTE_CATALOG_ARTICLES,
-        ROUTE_CATALOG_VIDEOS  )
+        ROUTE_CATALOG_VIDEOS,
+        Dest.Notification.route)
     val backStackEntry by nav.currentBackStackEntryAsState()
     val currentDest = backStackEntry?.destination
     val showBar = currentDest?.hierarchy?.any { it.route in barRoutes } == true
@@ -212,6 +213,9 @@ fun SajisehatApp() {
                     },
                     onOpenProfile = {
                         nav.navigateSingleTopTo(Dest.Profile.route)
+                    },
+                    onOpenNotification = {
+                        nav.navigateSingleTopTo(Dest.Notification.route)
                     }
                 )
             }
@@ -251,6 +255,9 @@ fun SajisehatApp() {
                     onOpenProfile = {
                         nav.navigateSingleTopTo(Dest.Profile.route)
                     },
+                    onOpenNotification = {
+                        nav.navigateSingleTopTo(Dest.Notification.route)
+                    },
                     startTab = CatalogTab.PRODUCT
                 )
             }
@@ -283,7 +290,7 @@ fun SajisehatApp() {
             composable(Dest.Profile.route) {
                 ProfileScreen(
                     onGoSettingsMarkah = { nav.navigate(Dest.Markah.route) },
-                    onGoNotificationSettings = { /* nav.navigate("notifSettings") */ },
+                    onGoNotificationSettings = { nav.navigate(Dest.Notification.route) },
                     onLoggedOut = {
                         nav.navigate(Dest.Login.route) {
                             popUpTo(0) { inclusive = true }
@@ -298,6 +305,12 @@ fun SajisehatApp() {
                     onOpenProductDetail = { id ->
                         nav.navigate(Dest.Detail.route(id))
                     }
+                )
+            }
+
+            composable(Dest.Notification.route) {
+                NotificationScreen(
+                    onBack = { nav.popBackStack() }
                 )
             }
 

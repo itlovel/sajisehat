@@ -24,7 +24,7 @@ sealed class Dest(val route: String) {
     data object Profile : Dest("profile")
 
     data object Markah : Dest("profile/markah")
-
+    data object Notification : Dest("profile/notification")
 
     data object Detail  : Dest("detail/{id}") {
         fun route(id: String) = "detail/$id"
