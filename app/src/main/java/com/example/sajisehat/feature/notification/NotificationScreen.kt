@@ -1,5 +1,6 @@
 package com.example.sajisehat.feature.notification
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -88,11 +89,14 @@ private fun NotificationContent(items: List<DailyNotificationUi>) {
             NotificationCard(item)
         }
 
+        item { Spacer(Modifier.height(20.dp)) }
+
         if (yesterdayItems.isNotEmpty()) {
             item { NotificationSectionTitle("Kemarin") }
             items(yesterdayItems) { item ->
                 NotificationCard(item)
             }
+            item { Spacer(Modifier.height(20.dp)) }
         }
 
         if (weekItems.isNotEmpty()) {
@@ -100,6 +104,7 @@ private fun NotificationContent(items: List<DailyNotificationUi>) {
             items(weekItems) { item ->
                 NotificationCard(item)
             }
+            item { Spacer(Modifier.height(20.dp)) }
         }
 
         item { Spacer(Modifier.height(24.dp)) }
@@ -117,10 +122,14 @@ private fun NotificationSectionTitle(text: String) {
 
 @Composable
 private fun NotificationCard(item: DailyNotificationUi) {
-    Surface(
+    val borderColor = MaterialTheme.colorScheme.inversePrimary.copy(alpha = 0.55f)
+
+    Card(
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
-        tonalElevation = 0.dp,
+        border = BorderStroke(1.dp, borderColor),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
+        ),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -129,12 +138,10 @@ private fun NotificationCard(item: DailyNotificationUi) {
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(Modifier.weight(1f)) {
                 Text(
                     text = item.title,
-                    style = SajiTextStyles.BodySemibold
+                    style = SajiTextStyles.BodyLargeBold
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(

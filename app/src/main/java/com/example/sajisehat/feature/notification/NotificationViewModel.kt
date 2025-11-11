@@ -112,29 +112,29 @@ class NotificationViewModel(
     }
 
     private val lowTemplates = listOf(
-        "Bagus Hari Ini!" to
+        "✨Bagus Hari Ini!" to
                 "Kamu hanya mengonsumsi sekitar {gram} gula hari ini. Pertahankan pola makan sehatmu ya! 🥕",
-        "Pilihan Sehat!" to
+        "\uD83C\uDF3F Pilihan Sehat!" to
                 "Asupan gulamu hari ini cuma {gram}. Keputusanmu buat batasi manis sudah tepat, lanjutkan! 💪",
-        "Mantap, Masih Aman" to
+        "\uD83C\uDF7D\uFE0F Mantap, Masih Aman" to
                 "Total gula hari ini {gram}, masih dalam batas aman. Terus jaga pola makan dan tetap aktif bergerak ya! 🚶‍♂️"
     )
 
     private val mediumTemplates = listOf(
-        "Nyaris Batas" to
+        "⚖\uFE0F Nyaris Batas" to
                 "Gula harianmu sudah {gram}. Sedikit lagi menyentuh batas 50g, yuk lebih pilih-pilih camilan besok. 💡",
-        "Waspada Gula!" to
+        "\uD83D\uDEA8 Waspada Gula!" to
                 "Hari ini kamu mengonsumsi {gram} gula. Masih oke, tapi coba kurangi minuman dan makanan manis di hari berikutnya ya. ⚖️",
-        "Perlu Sedikit Rem" to
+        "\uD83C\uDF7D\uFE0F Perlu Sedikit Rem" to
                 "Konsumsimu {gram} hari ini. Ayo mulai kurangi porsi manis pelan-pelan supaya tetap dalam batas sehat. 🚦"
     )
 
     private val highTemplates = listOf(
-        "Terlalu Manis Hari Ini" to
+        "\uD83C\uDF6C Terlalu Manis Hari Ini" to
                 "Total gula hari ini mencapai {gram}, melewati batas 50g. Yuk, besok kurangi minuman manis dan pilih makanan lebih sehat. 🍰➡🥗",
-        "Gula Melampaui Batas" to
+        "\uD83D\uDEAB Gula Melampaui Batas" to
                 "Wah, konsumsi gulamu {gram} hari ini. Tubuhmu butuh istirahat dari gula, coba batasi manis mulai besok ya. 🚫",
-        "Saatnya Kurangi Manis" to
+        "\uD83D\uDCC9 Saatnya Kurangi Manis" to
                 "Hari ini kamu sudah mengonsumsi {gram} gula. Yuk jadikan ini pengingat untuk lebih bijak memilih makanan dan minuman ke depannya. 📉"
     )
 }
