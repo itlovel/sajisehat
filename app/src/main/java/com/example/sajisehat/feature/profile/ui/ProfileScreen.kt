@@ -57,6 +57,7 @@ fun ProfileScreen(
                     when (evt) {
                         TopBarEvent.OnAvatarClick -> {
                         }
+                        TopBarEvent.OnBellClick   -> onGoNotificationSettings()
                         else -> topBarVM.onEvent(evt)
                     }
                 },

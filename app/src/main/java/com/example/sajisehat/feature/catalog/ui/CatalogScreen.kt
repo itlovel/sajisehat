@@ -36,6 +36,7 @@ fun CatalogScreen(
     vm: CatalogViewModel = viewModel(),
     onOpenProductDetail: (String) -> Unit = {},
     onOpenProfile: () -> Unit = {},
+    onOpenNotification: () -> Unit = {},
     startTab: CatalogTab = CatalogTab.PRODUCT
 ) {
     val st by vm.state.collectAsState()
@@ -54,6 +55,7 @@ fun CatalogScreen(
                         TopBarEvent.OnAvatarClick -> {
                             onOpenProfile()
                         }
+                        TopBarEvent.OnBellClick   -> onOpenNotification()
 
                         else -> topBarVM.onEvent(evt)
                     }
@@ -79,8 +81,7 @@ fun CatalogScreen(
                     onSearchChange = vm::onSearchChange,
                     onClearSearch = vm::onClearSearch,
                     onCategorySelected = vm::onCategorySelected,
-                    onToggleBookmark = vm::onToggleBookmark,
-                    onOpenProductDetail = onOpenProductDetail
+                    onToggleBookmark = vm::onToggleBookmark
                 )
 
                 CatalogTab.ARTICLE -> PlaceholderTab(text = "Artikel segera hadir 👀")
@@ -161,8 +162,7 @@ private fun ProductCatalogContent(
     onSearchChange: (String) -> Unit,
     onClearSearch: () -> Unit,
     onCategorySelected: (ProductCategory?) -> Unit,
-    onToggleBookmark: (String) -> Unit,
-    onOpenProductDetail: (String) -> Unit
+    onToggleBookmark: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -244,7 +244,6 @@ private fun ProductCatalogContent(
                         ProductItemRow(
                             product = product,
                             bookmarked = state.bookmarkedIds.contains(product.id),
-                            onClick = { onOpenProductDetail(product.id) },
                             onToggleBookmark = { onToggleBookmark(product.id) }
                         )
 
@@ -445,11 +444,9 @@ private fun CategoryChip(
 private fun ProductItemRow(
     product: CatalogProduct,
     bookmarked: Boolean,
-    onClick: () -> Unit,
     onToggleBookmark: () -> Unit
 ) {
     Surface(
-        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.background
     ) {

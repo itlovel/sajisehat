@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     onOpen: (String) -> Unit = {},
     onOpenProfile: () -> Unit = {},
+    onOpenNotification: () -> Unit = {},
     topBarViewModel: TopBarViewModel = viewModel(),
     vm: HomeViewModel = viewModel()
 ) {
@@ -51,6 +52,7 @@ fun HomeScreen(
                 onEvent = {
                     when (it) {
                         TopBarEvent.OnAvatarClick -> onOpenProfile()
+                        TopBarEvent.OnBellClick   -> onOpenNotification()
                         else -> topBarViewModel.onEvent(it)
                     }
                 }
