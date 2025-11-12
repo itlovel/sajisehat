@@ -1,137 +1,145 @@
+![Banner SAJISEHAT](screenshot/sajisehat-banner.png)
+
 # SAJISEHAT 🍽️  
-Aplikasi Pendamping Konsumsi Gula Harian
+Pendamping Cerdas Konsumsi Gula Harian
 
-SAJISEHAT adalah aplikasi Android yang membantu pengguna memahami dan memantau konsumsi gula harian melalui pemindaian label gizi pada kemasan produk makanan/minuman.  
+**Selamat datang di SAJISEHAT!** ✨  
 
-Dengan memanfaatkan pemindaian dokumen (ML Kit), perhitungan otomatis kadar gula, dan pencatatan riwayat konsumsi (trek), SAJISEHAT bertujuan untuk memberi edukasi sederhana namun berdampak tentang pentingnya membatasi konsumsi gula harian.
+SAJISEHAT adalah aplikasi mobile yang membantu pengguna memahami dan memantau konsumsi gula harian hanya dengan memindai label gizi pada kemasan makanan atau minuman. Di tengah gaya hidup serba instan, SAJISEHAT hadir sebagai teman kecil yang mengingatkan: *“Gula hari ini sudah seberapa banyak, ya?”*  
+
+Dengan antarmuka yang ramah, fitur scan berbasis **Google ML Kit**, dan pencatatan riwayat konsumsi (trek), SAJISEHAT ingin menjembatani data di label gizi menjadi informasi yang mudah dipahami dan relevan untuk kesehatan sehari-hari.
 
 ---
 
-## ✨ Fitur Utama
+## 👥 Tim Pengembang
 
-### 1. Scan Label Gizi
-- Pemindaian label gizi menggunakan **kamera** atau **galeri**.
-- Menggunakan **Google ML Kit Document Scanner** untuk mengambil gambar label gizi.
-- Ekstraksi informasi penting, seperti:
+Dibangun oleh mahasiswa Teknologi Informasi Universitas Brawijaya yang berkolaborasi untuk menggabungkan **riset UX**, **desain UI**, dan **pengembangan mobile modern**.
+
+| 👤 Nama                      | 🎓 Program Studi         | 🛠️ Peran                                                                                       | 
+|-----------------------------|--------------------------|-------------------------------------------------------------------------------------------------- |
+| **Aulia Permata Kumala**    | Teknologi Informasi      | Product Owner, UX Researcher                                                                      |
+| **Nofa Nisrina Salsabila**  | Teknologi Informasi      | UI Designer, Mobile App Developer (Google ML Kit–based label scanning & daily sugar tracking)     | 
+| **Lovely Ito Pandjaitan**   | Teknologi Informasi      | Mobile App Developer (MVVM-based architecture with Firebase backend & authentication)             | 
+
+---
+
+## 🎨 Desain & Tampilan Aplikasi
+
+> **Penasaran seperti apa tampilan SAJISEHAT?**  
+> Kami merancang UI dengan fokus pada kesederhanaan, keterbacaan, dan nuansa yang sehat & nyaman untuk pengguna.
+
+> 🔗 ✨ *(opsional, ganti jika ada)*  
+> [Figma UI Design – SAJISEHAT](https://figma.com/...)
+
+### 🖼️ Overview Layar Utama
+
+| Beranda & Navigasi | Hasil Scan & Trek |
+|:--:|:--:|
+| ![Homepage SAJISEHAT](screenshot/home-sajisehat.png) | ![Scan Result SAJISEHAT](screenshot/scan-result-sajisehat.png) |
+
+*(Silakan ganti `screenshot/*.png` dengan path gambar kamu sendiri di repo.)*
+
+---
+
+## ❓ SAJISEHAT Itu Apa?
+
+Secara singkat:
+
+> **SAJISEHAT = aplikasi pemindai label gizi berbasis Google ML Kit**  
+> yang mengubah informasi “gula per sajian” menjadi insight praktis seperti:  
+> *“Ini termasuk gula rendah, sedang, atau tinggi, dan kira-kira berapa % dari kebutuhan harianmu.”*
+
+Aplikasi ini dirancang untuk:
+
+- Membantu pengguna **membaca label gizi dengan lebih mudah**.
+- Menjadi pengingat kecil mengenai **batas konsumsi gula harian**.
+- Menyediakan **riwayat konsumsi** sehingga pengguna dapat melihat pola dari waktu ke waktu.
+
+---
+
+## ✨ Fitur Utama SAJISEHAT
+
+### 1. Scan Label Gizi (Google ML Kit)
+
+- Pengguna dapat memindai label gizi menggunakan:
+  - Kamera (real-time document scanner)
+  - Import dari galeri
+- Teknologi:
+  - **Google ML Kit Document Scanner**
+- Data yang diambil (jika tersedia di label):
   - Takaran saji (gram)
   - Jumlah sajian per kemasan
   - Gula per sajian (gram)
   - (Opsional) gula per kemasan
-- Aplikasi menghitung:
-  - Perkiraan **% kebutuhan gula harian**
-  - **Level gula**: RENDAH, SEDANG, TINGGI
-- Menampilkan hasil dalam UI yang ringkas dan mudah dipahami.
+- Aplikasi melakukan:
+  - Perhitungan **persentase kebutuhan gula harian** (estimasi).
+  - Klasifikasi **level gula**: RENDAH / SEDANG / TINGGI.
+- Ditampilkan dengan tampilan yang ringkas & mudah dimengerti.
 
-### 2. Trek Konsumsi Gula (Save Trek)
-- Setelah proses scan, pengguna dapat menyimpan hasil analisis sebagai **trek** (riwayat konsumsi).
-- Riwayat ini dapat digunakan untuk:
-  - Memantau pola konsumsi gula harian.
-  - Menyadari seberapa sering konsumsi produk bergula tinggi.
+### 2. Trek Konsumsi Gula (Daily Sugar Tracking)
+
+- Setelah scan, hasil dapat disimpan sebagai **trek harian**.
+- Trek menyimpan nilai gula per sajian/per produk.
+- Pengguna dapat melihat riwayat untuk:
+  - Menyadari frekuensi konsumsi gula.
+  - Mengontrol kebiasaan minum/makan manis.
 
 ### 3. Beranda (Home)
-- Halaman utama aplikasi.
-- Menyajikan ringkasan dan akses cepat ke fitur-fitur:
-  - Scan
-  - Trek
-  - Katalog
-  - Notifikasi
-  - Profil
+
+- Entry point utama aplikasi.
+- Menyediakan:
+  - Akses cepat ke **Scan**, **Trek**, **Katalog**, **Notifikasi**, **Profil**.
+  - Ringkasan singkat atau insight (dapat dikembangkan).
 
 ### 4. Katalog Produk (Catalog)
-- Menampilkan daftar produk/makanan/minuman sebagai referensi.
-- Dapat digunakan untuk edukasi contoh produk dengan kadar gula rendah, sedang, dan tinggi.
 
-### 5. Notifikasi & Pengingat (Notification)
-- Pengingat terkait konsumsi gula harian.
-- Menggunakan worker terjadwal (contoh: `DailySugarNotificationWorker`) untuk:
-  - Mengirim notifikasi harian.
-  - Mengingatkan pengguna untuk mengecek atau mencatat konsumsi gula hari ini.
-- Tersedia layar **Notification** untuk mengelola pengaturan notifikasi.
+- Berisi daftar produk contoh.
+- Dapat digunakan sebagai:
+  - Referensi produk dengan gula rendah/sedang/tinggi.
+  - Media edukasi terkait pilihan konsumsi yang lebih sehat.
 
-### 6. Profil Pengguna (Profile)
-- Halaman profil untuk mengelola informasi dasar pengguna.
-- Tempat pengaturan preferensi (misalnya target konsumsi gula, dsb) **(dapat dikembangkan lebih lanjut)**.
+### 5. Notifikasi Harian (Daily Sugar Notification)
 
----
+- Pengingat konsumsi gula harian.
+- Menggunakan **worker terjadwal** (contoh: `DailySugarNotificationWorker`) untuk:
+  - Mengirim notifikasi harian kepada pengguna.
+  - Mengajak pengguna melakukan scan atau mengecek trek konsumsinya.
+- Tersedia **Notification Screen** untuk pengaturan.
 
-## 🧠 Arsitektur Aplikasi
+### 6. Profil Pengguna (Profile Screen)
 
-SAJISEHAT menggunakan arsitektur modern Android yang modular dan mudah dikembangkan:
-
-- **Pattern**:  
-  - MVVM (Model–View–ViewModel)
-  - Feature-based (per fitur): `feature/scan`, `feature/home`, `feature/catalog`, `feature/notification`, `feature/profile`, dll.
-
-- **State Management**:
-  - `StateFlow` / `MutableStateFlow` di dalam `ViewModel`.
-  - UI (Jetpack Compose) bereaksi terhadap perubahan state (unidirectional data flow).
-  - Contoh: `ScanUiState`, `ScanViewModel`, `NotificationViewModel`.
-
-- **Layering (secara garis besar)**:
-  - `data/`  
-    - Repository dan model data (misalnya `ScanRepository`, `NutritionScanResult`).
-  - `feature/`  
-    - UI dan ViewModel per fitur (Scan, Home, Catalog, Notification, Profile).
-  - `navigation/`  
-    - Definisi destinasi dan route (`Destinations`, `NavHost`).
-  - `prefs/`  
-    - Pengelolaan preference (contoh: `AppPrefs` untuk menyimpan status izin kamera).
-  - `ui/components/`  
-    - Komponen UI reusable (contoh: `LoadingDialog`).
+- Halaman profil tempat personalisasi pengalaman.
+- Dapat dikembangkan untuk:
+  - Target gula harian.
+  - Preferensi notifikasi.
+  - Pengaturan akun / autentikasi.
 
 ---
 
-## 🧩 Framework, Library, dan Tools yang Digunakan
+## 🧠 Arsitektur & Pola Desain
 
-> Sesuai ketentuan lomba, daftar framework/library/tools utama yang digunakan adalah sebagai berikut:
+SAJISEHAT memanfaatkan arsitektur modern Android yang modular dan scalable.
 
-### Bahasa & Platform
-- **Kotlin** — Bahasa utama pengembangan aplikasi Android.
-- **Android SDK** — Platform untuk membangun aplikasi mobile.
+### Arsitektur Utama
 
-### UI & Desain
-- **Jetpack Compose**  
-  - UI deklaratif modern untuk Android.
-  - Digunakan untuk seluruh layar (Home, Scan, Catalog, Notification, Profile, dll).
-- **Material 3 (Material Design Components)**  
-  - Komponen UI dengan guideline Material Design 3.
-  - Tema warna, typography, shape, dsb.
+- **MVVM (Model–View–ViewModel)**  
+  - UI (View/Composable) hanya mengonsumsi `UiState` dari `ViewModel`.
+  - Logika bisnis dan pengambilan data diletakkan di ViewModel + Repository.
 
-### Arsitektur & Reaktivitas
-- **AndroidX Lifecycle & ViewModel**
-  - `ViewModel` untuk menampung dan mengelola state UI.
-- **Kotlin Coroutines**
-  - `viewModelScope`, `launch`, `delay`, dll untuk operasi asynchronous.
-- **Kotlin Flow / StateFlow**
-  - Aliran data reaktif yang di-observe di UI dengan `collectAsState()`.
+- **Feature-based Modularization**  
+  Folder dipisah per fitur:
+  - `feature/scan`
+  - `feature/home`
+  - `feature/catalog`
+  - `feature/notification`
+  - `feature/profile`
+  - dll.
 
-### Data & Preferences
-- **AppPrefs (berbasis DataStore / SharedPreferences)**  
-  - Menyimpan pengaturan aplikasi, misalnya status izin kamera.
+- **State Management**  
+  - `StateFlow` & `MutableStateFlow` untuk menyimpan state UI (misalnya `ScanUiState`).
+  - UI mengobserve dengan `collectAsState()` di Jetpack Compose.
 
-### Machine Learning & Vision
-- **Google ML Kit Document Scanner**
-  - `GmsDocumentScanning`, `GmsDocumentScannerOptions`, `GmsDocumentScanningResult`.
-  - Digunakan untuk:
-    - Pemotretan dan pemilihan gambar label gizi dari kamera/galeri.
-    - Menghasilkan `Uri` gambar yang selanjutnya dianalisis oleh `ScanRepository`.
-
-### Background Task & Notifikasi
-- **WorkManager / Worker (AndroidX)**  
-  - Contoh: `DailySugarNotificationWorker` untuk menjadwalkan notifikasi harian.
-- **Android Notification APIs**  
-  - Menampilkan notifikasi lokal untuk mengingatkan konsumsi gula / penggunaan aplikasi.
-
-### Build, Version Control & Tools
-- **Gradle (KTS)** — Sistem build (`build.gradle.kts`, `libs.versions.toml`).
-- **Android Studio** — IDE utama pengembangan aplikasi.
-- **Git & GitHub** — Version control, kolaborasi, dan manajemen branch.
-
-_(Jika pada project sebenarnya digunakan library lain seperti Hilt, Retrofit, Room, Firebase, dsb, dapat ditambahkan di sini.)_
-
----
-
-## 📂 Struktur Proyek (Ringkasan)
+### Contoh Struktur Proyek (Ringkas)
 
 ```text
 app/
