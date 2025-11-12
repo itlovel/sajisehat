@@ -60,7 +60,7 @@ fun SplashScreen(
 
                 Text(
                     text = "Baca Labelnya, Jaga Gula-nya,\nSehat Raganya!",
-                    style = SajiTextStyles.BodyLarge,
+                    style = SajiTextStyles.Body,
                     textAlign = TextAlign.Center
                 )
             }

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.sajisehat.data.prefs.AppPrefs
 import com.example.sajisehat.data.scan.ScanRepository
 import com.example.sajisehat.data.scan.model.NutritionScanResult
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -85,9 +86,20 @@ class ScanViewModel(
         if (imageUris.isEmpty()) return
 
         viewModelScope.launch {
-            _uiState.update { it.copy(step = ScanStep.PROCESSING, isProcessing = true, errorMessage = null) }
+            // Masuk ke fase PROCESSING → nyalakan loading
+            _uiState.update {
+                it.copy(
+                    step = ScanStep.PROCESSING,
+                    isProcessing = true,
+                    errorMessage = null
+                )
+            }
 
             val result = scanRepository.processScannedImages(imageUris)
+
+            // Biar user sempat lihat loading walaupun prosesnya cepat
+            delay(1000L)
+
             result.fold(
                 onSuccess = { nutrition ->
                     val ui = mapToUi(nutrition)
@@ -177,5 +189,4 @@ class ScanViewModel(
     }
 
     enum class SugarCategory { LOW, MEDIUM, HIGH, UNKNOWN }
-
 }
