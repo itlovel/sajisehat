@@ -6,14 +6,28 @@ import kotlin.math.roundToInt
 class NutritionLabelParser {
 
     fun parse(rawText: String): NutritionScanResult {
-        val normalized = normalizeText(rawText)
+        // 1) Versi per baris (hasil OCR apa adanya, cuma dibersihkan sedikit)
+        val originalLines = rawText
+            .lines()
+            .map { it.replace("\u00A0", " ").trim() }
+            .filter { it.isNotEmpty() }
 
-        val servingSize = extractServingSizeGram(normalized)
-        val servingsPerPack = extractServingsPerPack(normalized)
+        // === NEW: gabungkan baris yang termasuk satu "row gizi" ===
+        val lines = mergeNutritionRows(originalLines)
 
-        // 🎯 ekstraksi gula yang lebih agresif
-        val sugarPerServing = extractSugarPerServingGram(normalized)
-        val sugarPerPack = extractSugarPerPackGram(normalized)
+        // 2) Versi "flat" untuk regex yang tidak peduli baris
+        val normalizedFlat = normalizeText(rawText)
+
+        // ========= TAKARAN SAJI & JUMLAH SAJIAN =========
+        val servingSize = extractServingSizeGramFromLines(lines)
+            ?: extractServingSizeGram(normalizedFlat)    // fallback
+
+        val servingsPerPack = extractServingsPerPackFromLines(lines)
+            ?: extractServingsPerPack(normalizedFlat)    // fallback
+
+        // ========= GULA (PER SAJIAN & PER KEMASAN) =========
+        val sugarPerServing = extractSugarPerServingGramFromLines(lines)
+        val sugarPerPack = extractSugarPerPackGramFromLines(lines)
 
         val finalSugarPerServing = when {
             sugarPerServing != null -> sugarPerServing
@@ -41,16 +55,77 @@ class NutritionLabelParser {
         )
     }
 
-    // ========= NORMALISASI TEKS =========
+    // ========= NORMALISASI TEKS GLOBAL =========
 
     private fun normalizeText(text: String): String {
         return text
-            .replace("\u00A0", " ")          // non-breaking space
-            .replace(Regex("\\s+"), " ")     // spasi berulang
+            .replace("\u00A0", " ")          // non-breaking space → spasi normal
+            .replace(Regex("[ \t]+"), " ")   // gabungkan SPASI & TAB, newline tetap
             .lowercase()
     }
 
-    // ========= EKSTRAK TAKARAN SAJI & SAJIAN =========
+    // ========= HELPER UNTUK ROW NUTRISI (NEW) =========
+
+    private val nutrientKeywords = listOf(
+        "lemak", "protein", "karbohidrat", "karbohidrat total",
+        "gula", "sugar", "natrium", "garam", "sodium", "energi", "energy"
+    )
+
+    private fun hasNumber(s: String): Boolean =
+        s.any { it.isDigit() }
+
+    private fun containsSugarWord(s: String): Boolean =
+        s.contains("gula", ignoreCase = true) || s.contains("sugar", ignoreCase = true)
+
+    /**
+     * Menggabungkan baris nutrisi yang terbelah karena layout tabel.
+     *
+     * Contoh OCR:
+     *   "Gula Total"
+     *   "4 g"
+     * Menjadi:
+     *   "Gula Total 4 g"
+     *
+     * Aturan:
+     * - Jika satu baris punya kata kunci nutrisi tapi tidak ada angka,
+     *   dan baris di bawahnya ada angka + satuan (g/mg/%),
+     *   dua baris itu digabung.
+     */
+    private fun mergeNutritionRows(lines: List<String>): List<String> {
+        val result = mutableListOf<String>()
+        var i = 0
+        while (i < lines.size) {
+            val cur = lines[i].trim()
+            val curLower = cur.lowercase()
+
+            val isNutrientLine = nutrientKeywords.any { kw ->
+                curLower.contains(kw)
+            }
+
+            val curHasNumber = hasNumber(cur)
+
+            if (isNutrientLine && !curHasNumber && i + 1 < lines.size) {
+                val next = lines[i + 1].trim()
+                val nextLower = next.lowercase()
+
+                val nextHasNumber = hasNumber(nextLower)
+                val nextHasUnit = Regex("\\b(g|gr|gram|mg|mcg|µg|%)\\b").containsMatchIn(nextLower)
+
+                if (nextHasNumber && nextHasUnit) {
+                    // gabung dua baris sebagai satu row
+                    result.add("$cur $next")
+                    i += 2
+                    continue
+                }
+            }
+
+            result.add(cur)
+            i++
+        }
+        return result
+    }
+
+    // ========= TAKARAN SAJI & SAJIAN (FALLBACK "FLAT") =========
 
     private fun extractServingSizeGram(text: String): Double? {
         // contoh: "takaran saji 30 g", "takaran saji : 30 gram"
@@ -75,46 +150,77 @@ class NutritionLabelParser {
         return null
     }
 
+    // ========= TAKARAN SAJI & SAJIAN (LINE-BASED / ROW) =========
 
-    // ========= EKSTRAK GULA (lebih agresif) =========
+    private fun extractServingSizeGramFromLines(lines: List<String>): Double? {
+        for (rawLine in lines) {
+            val line = normalizeText(rawLine)
+            val regex = Regex("""takaran\s+saji[^0-9]*([0-9]+)\s*(g|gram)""")
+            val match = regex.find(line)
+            if (match != null) {
+                return match.groupValues.getOrNull(1)?.toDoubleOrNull()
+            }
+        }
+        return null
+    }
 
-    /**
-     * Cari gula per sajian:
-     * 1. cari baris yang mengandung "gula" / "sugar"
-     * 2. normalisasi (perbaiki spasi, koma, 3q → 3 g, dll)
-     * 3. coba beberapa pola regex
-     */
-    private fun extractSugarPerServingGram(text: String): Double? {
-        val lines = text.split("\n", "\r")
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
+    private fun extractServingsPerPackFromLines(lines: List<String>): Int? {
+        var foundKeywordLine = false
 
+        for (rawLine in lines) {
+            val line = normalizeText(rawLine)
+
+            if (line.contains("jumlah sajian per kemasan")) {
+                foundKeywordLine = true
+            }
+
+            // Pola umum: "jumlah sajian per kemasan 3"
+            val r1 = Regex("""jumlah\s+sajian[^0-9]*([0-9]+)""")
+            val m1 = r1.find(line)
+            if (m1 != null) {
+                return m1.groupValues.getOrNull(1)?.toIntOrNull()
+            }
+
+            // Pola lain: "3 sajian per kemasan"
+            val r2 = Regex("""([0-9]+)\s+sajian\s+per\s+kemasan""")
+            val m2 = r2.find(line)
+            if (m2 != null) {
+                return m2.groupValues.getOrNull(1)?.toIntOrNull()
+            }
+        }
+
+        // NEW: kalau ada teks "jumlah sajian per kemasan" tapi tidak ada angka,
+        // asumsikan 1 sajian per kemasan (seperti label yang kamu kirim).
+        if (foundKeywordLine) return 1
+
+        return null
+    }
+
+    // ========= GULA PER SAJIAN (LINE-BASED) =========
+
+    private fun extractSugarPerServingGramFromLines(lines: List<String>): Double? {
         var best: Double? = null
 
         fun updateBest(v: Double?) {
             if (v == null) return
-            if (v < 0.1 || v > 100.0) return   // batas wajar
+            if (v < 0.1 || v > 100.0) return   // batas wajar nilai gula per sajian
             best = v
         }
 
         for (rawLine in lines) {
-            // Hanya baris yang benar-benar menyebut gula
-            val hasSugarWord = rawLine.contains("gula", ignoreCase = true) ||
-                    rawLine.contains("sugar", ignoreCase = true)
+            val hasSugarWord = containsSugarWord(rawLine)
             if (!hasSugarWord) continue
 
             val line = normalizeSugarLine(rawLine)
 
-            // Kalau baris ini juga mengandung kata "takaran" atau "saji", skip
-            // untuk menghindari kasus "takaran saji 20 g gula ..." yang aneh
-            if (line.contains("takaran saji") || line.contains("takaran", true)) {
+            // Jika baris ini ada "takaran saji" biasanya bukan baris gula utama
+            if (line.contains("takaran saji")) {
                 // tapi kalau ada pola "gula 1 g" yang jelas, tetap boleh
                 val safe = Regex(
                     """gula( total| tambahan)?[:=\s]+([0-9]+(?:\.[0-9]+)?)\s*(g|gr|gram)\b"""
                 ).find(line)
                 if (safe != null) {
                     updateBest(safe.groupValues[2].toDoubleOrNull())
-                    continue
                 }
                 continue
             }
@@ -137,7 +243,7 @@ class NutritionLabelParser {
                 continue
             }
 
-            // Pola 3: baris seperti "gula 1 g 3%" → ambil angka + g TERDEKAT setelah kata gula
+            // Pola 3: "gula 1 g 3%" → ambil angka + g terdekat setelah kata "gula"
             val idxSugar = line.indexOf("gula")
             if (idxSugar >= 0) {
                 val after = line.substring(idxSugar)
@@ -152,17 +258,13 @@ class NutritionLabelParser {
         return best
     }
 
-    /**
-     * Kalau di label ada info gula per kemasan,
-     * misal "gula per kemasan 24 g" / "total sugar per pack 24 g"
-     */
-    private fun extractSugarPerPackGram(text: String): Double? {
-        val lines = text.split("\n", "\r")
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
+    // ========= GULA PER KEMASAN (LINE-BASED) =========
 
+    private fun extractSugarPerPackGramFromLines(lines: List<String>): Double? {
         for (rawLine in lines) {
-            if (!rawLine.contains("gula") && !rawLine.contains("sugar")) continue
+            val hasSugarWord = containsSugarWord(rawLine)
+            if (!hasSugarWord) continue
+
             val line = normalizeSugarLine(rawLine)
 
             val m = Regex(
@@ -174,6 +276,8 @@ class NutritionLabelParser {
         }
         return null
     }
+
+    // ========= NORMALISASI KHUSUS BARIS GULA =========
 
     /**
      * Normalisasi khusus baris gula:
@@ -208,7 +312,8 @@ class NutritionLabelParser {
         return s
     }
 
-    // ========= PRODUCT NAME =========
+    // ========= NAMA PRODUK =========
+
     private fun extractProductName(rawText: String): String? {
         val lower = rawText.lowercase()
         val markerIndex = lower.indexOf("informasi nilai gizi")
@@ -227,7 +332,6 @@ class NutritionLabelParser {
 
         return lines.lastOrNull()
     }
-
 
     // ========= UTIL OPSIONAL: % kebutuhan harian =========
 
