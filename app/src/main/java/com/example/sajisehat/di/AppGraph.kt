@@ -1,7 +1,7 @@
 package com.example.sajisehat.di
 import okhttp3.OkHttpClient
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 import android.content.Context
 import com.example.sajisehat.data.auth.AuthRepository
@@ -54,9 +54,10 @@ object AppGraph {
         Retrofit.Builder()
             .baseUrl("https://sajisehat-backend.onrender.com/")
             .client(okHttpClient)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create()) // ⬅️ pakai Gson
             .build()
     }
+
 
     // API service /scan-nutrition
     private val scanNutritionApiService: ScanNutritionApiService by lazy {
