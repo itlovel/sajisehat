@@ -28,7 +28,7 @@ Cocok untuk:
    Menggunakan kamera dan **Google ML Kit Document Scanner** untuk mengambil gambar label gizi, kemudian backend (Flask + Roboflow) membantu mendeteksi bagian penting seperti takaran saji, sajian per kemasan, dan total gula.
 
 2. **Konversi ke Estimasi Gula Harian**  
-   Aplikasi mengestimasi persentase konsumsi gula dari batas rekomendasi harian (misalnya berdasarkan acuan WHO / angka kecukupan lainnya) sehingga lebih mudah dipahami.
+   Aplikasi mengestimasi persentase konsumsi gula dari batas rekomendasi harian (berdasarkan acuan WHO) sehingga lebih mudah dipahami.
 
 3. **Tracking Konsumsi Gula**  
    Hasil setiap scan dapat disimpan sebagai **riwayat harian**, sehingga pengguna bisa:
@@ -100,7 +100,6 @@ Cocok untuk:
   - Tanggal dan waktu konsumsi  
   - Nama/jenis produk  
   - Estimasi kontribusi gula terhadap total harian  
-- Dapat dikembangkan menjadi grafik tren konsumsi gula
 
 ### 4. 🏠 Beranda (Home Screen)
 - Ringkasan singkat:
@@ -124,9 +123,6 @@ Cocok untuk:
 - Menampilkan informasi dasar profil (nama, email, foto)  
 - Pengaturan sederhana (misal: logout, preferensi notifikasi)  
 - Melihat produk yang ditandai  
-- Dapat dikembangkan untuk:
-  - Target gula harian personal  
-  - Preferensi bahasa atau tema  
 
 ---
 
