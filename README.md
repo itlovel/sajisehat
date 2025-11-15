@@ -92,7 +92,6 @@ Cocok untuk:
 ---
 
 ## 🧰 Daftar Framework, Library, dan Tools yang Digunakan  
-*(Bagian ini disusun untuk memenuhi ketentuan lomba: peserta wajib mencantumkan daftar framework, library, atau tools yang digunakan dalam dokumentasi teknis.)*
 
 ### 1. Bahasa & Platform
 - **Kotlin** (Android)
@@ -148,8 +147,6 @@ Cocok untuk:
 - **OkHttp**  
   - `com.squareup.okhttp3:okhttp`
 
-*(Catatan: API eksternal dapat dihubungkan kemudian untuk katalog atau fitur rekomendasi.)*
-
 ### 7. Penyimpanan Data Lokal
 - **AndroidX DataStore Preferences**  
   - `androidx.datastore:datastore-preferences`  
@@ -183,9 +180,9 @@ Cocok untuk:
 
 ---
 
-## 🏛️ Arsitektur Aplikasi (High-Level)
+## 🏛️ Arsitektur Aplikasi 
 
-Aplikasi menerapkan pola sederhana berbasis **Clean-ish Architecture + MVVM**:
+Aplikasi menerapkan pola sederhana berbasis **Clean Architecture + MVVM**:
 
 - **Layer Data**
   - Repository untuk:
