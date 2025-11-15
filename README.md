@@ -1,4 +1,4 @@
-[![Banner SAJISEHAT](screenshot/sajisehat-banner.png)](https://github.com/itlovel/sajisehat/blob/main/screenshot/frontend_sajisehat_banner.png)
+[![Banner SAJISEHAT](screenshot/sajisehat-banner.png)](https://github.com/itlovel/sajisehat/blob/main/screenshot/frontend_sajisehat_banner.png?raw=true)
 
 # SAJISEHAT 🍽️  
 **Aplikasi Pemindai Konsumsi Gula Harian**
