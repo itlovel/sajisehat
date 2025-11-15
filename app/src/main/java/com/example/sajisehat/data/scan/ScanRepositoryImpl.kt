@@ -77,6 +77,27 @@ class ScanRepositoryImpl(
         return bos.toByteArray()
     }
 
+    private fun expandRectToMinSize(
+        rect: android.graphics.Rect,
+        minSize: Int,
+        imageWidth: Int,
+        imageHeight: Int
+    ): android.graphics.Rect {
+
+        val cx = rect.centerX()
+        val cy = rect.centerY()
+
+        val half = minSize / 2
+
+        val newLeft = (cx - half).coerceAtLeast(0)
+        val newTop = (cy - half).coerceAtLeast(0)
+        val newRight = (cx + half).coerceAtMost(imageWidth)
+        val newBottom = (cy + half).coerceAtMost(imageHeight)
+
+        return android.graphics.Rect(newLeft, newTop, newRight, newBottom)
+    }
+
+
     private suspend fun ocrAllDetections(
         fullBitmap: Bitmap,
         layout: LayoutDetectionResult
@@ -85,19 +106,45 @@ class ScanRepositoryImpl(
         val imageWidth = layout.imageWidth
         val imageHeight = layout.imageHeight
 
-        layout.detections.forEach { det ->
-            val rect = det.toRect(imageWidth, imageHeight)
-            if (rect.width() <= 0 || rect.height() <= 0) return@forEach
+        val minSize = 32
+        val margin = 8 // px, biar nggak terlalu ketat
 
-            val crop = Bitmap.createBitmap(
-                fullBitmap,
-                rect.left,
-                rect.top,
-                rect.width(),
-                rect.height()
+        layout.detections.forEach { det ->
+            // 1. Rect awal dari Roboflow
+            val baseRect = det.toRect(imageWidth, imageHeight)
+
+            if (baseRect.width() <= 0 || baseRect.height() <= 0) return@forEach
+
+            // 2. Perbesar sedikit (kasih margin ke segala arah)
+            val expandedRect = android.graphics.Rect(
+                (baseRect.left - margin).coerceAtLeast(0),
+                (baseRect.top - margin).coerceAtLeast(0),
+                (baseRect.right + margin).coerceAtMost(imageWidth),
+                (baseRect.bottom + margin).coerceAtMost(imageHeight)
             )
 
-            val text = textRecognizer.recognizeText(crop)
+            if (expandedRect.width() <= 0 || expandedRect.height() <= 0) return@forEach
+
+            // 3. Crop dari bitmap asli
+            val crop = Bitmap.createBitmap(
+                fullBitmap,
+                expandedRect.left,
+                expandedRect.top,
+                expandedRect.width(),
+                expandedRect.height()
+            )
+
+            // 4. Kalau crop masih terlalu kecil untuk MLKit, upscale dulu
+            val ocrBitmap: Bitmap = if (crop.width < minSize || crop.height < minSize) {
+                val newWidth = maxOf(crop.width, minSize)
+                val newHeight = maxOf(crop.height, minSize)
+                Bitmap.createScaledBitmap(crop, newWidth, newHeight, true)
+            } else {
+                crop
+            }
+
+            // 5. Baru kirim ke MLKit Text Recognizer
+            val text = textRecognizer.recognizeText(ocrBitmap)
             if (text.isNotBlank()) {
                 result += OcrSegment(
                     clazz = det.clazz,
