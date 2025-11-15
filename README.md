@@ -118,8 +118,7 @@ Backend dikembangkan menggunakan **Flask**, dan dideploy di **Render** menggunak
 - `app/__init__.py` → inisialisasi Flask  
 - `app/routes.py` → endpoint `/scan-nutrition`  
 - `app/roboflow_client.py` → mengirim gambar ke workflow Roboflow  
-- `app/ocr_engine.py` → *tidak melakukan OCR*, hanya orkestrasi pipeline ke Roboflow  
-- `app/nutrition_parser.py` → parsing metadata (jika diperlukan)  
+- `app/roboflow_engine.py` →  orkestrasi pipeline ke Roboflow  
 - `run.py` → entry point aplikasi  
 
 ---
@@ -131,9 +130,8 @@ sajisehat-backend/
 ├─ app/
 │  ├─ __init__.py
 │  ├─ routes.py
-│  ├─ ocr_engine.py
+│  ├─ roboflow_engine.py
 │  ├─ roboflow_client.py
-│  ├─ nutrition_parser.py
 ├─ run.py
 ├─ requirements.txt
 ├─ Procfile
