@@ -11,7 +11,7 @@ Pengguna cukup memotret label gizi produk (misalnya minuman kemasan), lalu aplik
 - Menyimpan riwayat konsumsi gula untuk dipantau dari waktu ke waktu  
 
 Cocok untuk:  
-**mahasiswa, pekerja, dan keluarga muda** yang ingin tetap menikmati minuman manis, tapi dengan kontrol yang lebih sadar dan terukur. 😉
+**remaja dan dewasa muda** yang ingin tetap menikmati makanan dan minuman kemasan, tapi dengan kontrol yang lebih sadar dan terukur. 😉
 
 ---
 
@@ -19,7 +19,7 @@ Cocok untuk:
 
 ### Masalah yang Umum Terjadi
 - Banyak orang **tidak membaca** atau **tidak paham** label gizi.
-- Informasi seperti *“Gula 18 g per sajian”* terasa abstrak.
+- Konsumsi gula berlebih.
 - Tidak ada tracking sederhana untuk melihat **total gula harian** yang sudah dikonsumsi.
 
 ### Solusi yang Ditawarkan SAJISEHAT
@@ -85,6 +85,7 @@ Cocok untuk:
 ### 7. 🙋‍♀️ Profil Pengguna (Profile Screen)
 - Menampilkan informasi dasar profil (nama, email, foto).
 - Pengaturan sederhana (misal: logout, preferensi notifikasi).
+- Melihat produk yang ditandai.
 - Dapat dikembangkan untuk:
   - Target gula harian personal.
   - Preferensi bahasa atau tema.
