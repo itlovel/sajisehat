@@ -39,6 +39,8 @@ Cocok untuk:
 
 ## 🔄 Alur Fitur Scan (End-to-End)
 
+![Alur Fitur Scan](https://github.com/itlovel/sajisehat/raw/main/screenshot/alur_fitur_scan.png)
+
 1. **Capture Gambar – Frontend**  
    - Pengguna memotret label gizi menggunakan **Google ML Kit Document Scanner** sebagai antarmuka kamera.
 
