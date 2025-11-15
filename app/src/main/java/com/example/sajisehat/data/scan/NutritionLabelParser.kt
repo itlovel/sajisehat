@@ -2,8 +2,28 @@ package com.example.sajisehat.data.scan
 
 import com.example.sajisehat.data.scan.model.NutritionScanResult
 import kotlin.math.roundToInt
+import com.example.sajisehat.data.scan.model.NutritionRawSegments
 
 class NutritionLabelParser {
+
+    // OVERLOAD BARU
+    fun parse(segments: NutritionRawSegments): NutritionScanResult {
+        // Gabungkan segmen jadi "teks OCR mini"
+        // supaya bisa diproses oleh parse(rawText: String) yang lama
+        val syntheticRawText = buildString {
+            segments.takaranSaji?.let { appendLine(it) }
+            segments.sajianPerKemasan?.let { appendLine(it) }
+            segments.gula?.let { appendLine(it) }
+        }
+
+        // Kalau semua segmen null / kosong, lempar error
+        if (syntheticRawText.isBlank()) {
+            throw IllegalArgumentException("Tidak ada teks nutrisi yang terbaca dari segmen")
+        }
+
+        // Gunakan logic lama yang sudah teruji
+        return parse(syntheticRawText)
+    }
 
     fun parse(rawText: String): NutritionScanResult {
         // 1) Versi per baris (hasil OCR apa adanya, cuma dibersihkan sedikit)
@@ -332,6 +352,7 @@ class NutritionLabelParser {
 
         return lines.lastOrNull()
     }
+
 
     // ========= UTIL OPSIONAL: % kebutuhan harian =========
 
