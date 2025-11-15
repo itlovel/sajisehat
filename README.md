@@ -206,7 +206,7 @@ Aplikasi menerapkan pola sederhana berbasis **Clean Architecture + MVVM**:
 
 ---
 
-## 📁 Struktur Proyek (Ringkas)
+## 📁 Struktur Proyek (Ringkasan)
 
 ```text
 app/
