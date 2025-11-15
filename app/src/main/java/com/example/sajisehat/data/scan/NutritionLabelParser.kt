@@ -141,13 +141,14 @@ class NutritionLabelParser {
     }
 
     // ---- Sajian per kemasan ----
+    // ---- Jumlah sajian per kemasan ----
     private fun parseServingsPerPack(lines: List<String>): Int? {
         if (lines.isEmpty()) return null
 
-        // Normalisasi dulu semua baris
+        // Normalisasi semua baris (perbaiki typo sajian/kemasan dan slash)
         val normalizedLines = lines.map { normalizeServingsLine(it) }
 
-        // ---------- 1) Pola global: angka + frasa (contoh: "6 sajian per kemasan") ----------
+        // ---------- 1) Pola global: "6 sajian per kemasan" / "6 servings per container" ----------
         val joined = normalizedLines.joinToString(" ")
 
         val pattern = Regex(
@@ -166,7 +167,7 @@ class NutritionLabelParser {
             if (v != null) return v.roundToInt()
         }
 
-        // ---------- 2) Fallback per-baris: cek angka di baris sendiri / atas / bawah ----------
+        // ---------- 2) Fallback per baris: cek baris ini + atas + bawah ----------
         var foundKeywordLine = false
 
         for (i in normalizedLines.indices) {
@@ -199,7 +200,7 @@ class NutritionLabelParser {
         }
 
         // ---------- 3) Kalau ada teks "sajian per kemasan" tapi benar-benar tanpa angka ----------
-        // asumsikan 1 sajian per kemasan (fallback aman, sama seperti logika lama kamu)
+        // fallback aman: anggap 1 sajian per kemasan
         if (foundKeywordLine) return 1
 
         return null
@@ -468,19 +469,20 @@ class NutritionLabelParser {
         var s = text0.lowercase()
 
         // variasi "sajian" salah baca
-        s = Regex("saj[1i]an").replace(s, "sajian")   // saj1an, sajan, dll
+        s = Regex("saj[1i]an").replace(s, "sajian")
         s = Regex("sajlan|sajjan").replace(s, "sajian")
 
         // variasi "kemasan" salah baca
-        s = Regex("kemas[anmn]").replace(s, "kemasan")   // kemasam, kemasnm
+        s = Regex("kemas[anmn]").replace(s, "kemasan")
         s = Regex("kemsan|kemazan|kemasn").replace(s, "kemasan")
 
-        // slash jadi "per"
+        // "sajian/kemasan" -> "sajian per kemasan"
         s = Regex("sajian\\s*/\\s*kemasan").replace(s, "sajian per kemasan")
         s = Regex("porsi\\s*/\\s*kemasan").replace(s, "porsi per kemasan")
 
         return s
     }
+
 
 
 
